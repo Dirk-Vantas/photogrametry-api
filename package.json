@@ -1,0 +1,22 @@
+{
+  "name": "photogrametry-api",
+  "version": "1.0.0",
+  "description": "A api for a NeRF photogrametry service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dirk-Vantas/photogrametry-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dirk-Vantas/photogrametry-api/issues"
+  },
+  "homepage": "https://github.com/Dirk-Vantas/photogrametry-api#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
