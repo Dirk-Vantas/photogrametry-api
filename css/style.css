@@ -1,0 +1,19 @@
+/* This styles the aside container */
+#aSide {
+    height: 600px;
+    width: 600px;
+    /*position: absolute;*/
+    top: calc(50% - 250px);
+    
+}
+
+/* This styles the 3D object inserted in the aside container */
+#aSide model-viewer {
+    height: 600px;
+    width: 600px;
+    /*position: absolute;*/
+    top: 0;
+    left: 0;
+    border: #641AE6;
+    border-style: solid;
+}

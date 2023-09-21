@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Photogrammetry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.7/dist/full.css" rel="stylesheet" type="text/css" />
+    <!--Imports a model-viewer JavaScript code -->
+    <!--It helps to handle how the 3D Object would be displayed -->
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+</head>
+
+<body class="flex justify-center items-center">
+    <div class="text-center">
+        <br />
+        <div class="flex flex-col">
+            <h1 class="text-3xl font-bold">
+                Welcome to the Photogrammetry Program
+            </h1>
+
+            <br />
+            <input type="file" class="file-input file-input-bordered file-input-primary" accept="video/*" />
+            <br />
+            <a href="example-GLTFs/adamHead.gltf" class="btn btn-primary" download="proposed_file_name">Download</a>
+            <br />
+            <div id="aSide" class="bg-base-300">
+                <model-viewer class="" src="example-GLTFs/adamHead.gltf" alt="VR Headset" auto-rotate camera-controls ar
+                    ios-src="example-GLTFs/adamHead.gltf">
+                </model-viewer>
+            </div>
+        </div>
+
+    </div>
+
+
+
+</body>
+
+</html>
