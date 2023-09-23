@@ -1,9 +1,10 @@
 const  express = require('express');
 const fileUpload = require("express-fileupload");
-
+const dotenv = require("dotenv")
 //const multer = require('multer');
 const path = require("path");
 
+dotenv.config();
 
 const createJobFolder = require('./utilities/createFolder');
 const createJobID = require('./utilities/createJobID');
