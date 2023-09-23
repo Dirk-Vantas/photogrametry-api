@@ -3,9 +3,12 @@ Node.js API for a photgramatry service based on meshroom photogrametry by alicev
 
 reuqired libraries:
 
+considering a .env file to handle filepaths
+right now only windows version of liraries supported
+
 node.js to run api
 ffmpeg || for frameextraction from the videos
-meshroom || to run feature extraction, imagematching, sparce cloud creation and meshing
+meshroom || Meshroom-2023.2.0 to run feature extraction, imagematching, sparce cloud creation and meshing
 meshlab || for post processing of the mesh 
 
 Endpoints:

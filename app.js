@@ -1,17 +1,23 @@
 const  express = require('express');
 const fileUpload = require("express-fileupload");
-const multer = require('multer');
+
+//const multer = require('multer');
 const path = require("path");
-const app = express();
+
 
 const createJobFolder = require('./utilities/createFolder');
 const createJobID = require('./utilities/createJobID');
+const createPipelineProcess = require('./utilities/pipelineManager');
+//const pipelineConstruct = require('./utilities/pipelineConstruct');
 
-const { exec } = require('child_process');
+
 const PORT = process.env.PORT || 3000;
-
+const app = express();
 
 app.use(express.json());
+
+// Map to store information about running video processes
+const runningProcesses = [];
 
 app.listen(PORT, () => {
     console.log("Server Listening on PORT:", PORT);
@@ -49,12 +55,17 @@ app.post('/upload',
       //write files to system for processing of the pipeline
       //create filepath for upload
       const filepath = path.join(__dirname, jobPath,uploadObject.name)
+      //!!!!Upload disabled for debugging dont want my hard drive to explode :)
       uploadObject.mv(filepath,(err) => {
         if (err) return res.status(500).json({ status : "error", message: err})
       })
       console.log('upload succeeded and folder has been created')
       
       //after upload succeeded start pipeline processing
+      // Spawn a child process to run the video processing pipeline
+      createPipelineProcess(currentJobID,jobPath,filepath,runningProcesses);
+
+      
       
       return res.json({status: 'success', message: uploadObject.name})
 
