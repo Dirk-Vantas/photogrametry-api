@@ -4,6 +4,9 @@ const multer = require('multer');
 const path = require("path");
 const app = express();
 
+const createJobFolder = require('./utilities/createFolder');
+const createJobID = require('./utilities/createJobID');
+
 const { exec } = require('child_process');
 const PORT = process.env.PORT || 3000;
 
@@ -19,13 +22,41 @@ app.get("/", (req,res) => {
   res.sendFile(path.join(__dirname, "uploadTest.html"));
 });
 
+//? maybe add middleware to check if file is too big and if files have
+//  been supplied propely
+
+//uploads and saves videos the 'jobs' folder to be processed by pipeline
 app.post('/upload',
     fileUpload({createParentPath:true}),
     (req,res)=> {
+      //get the files from the request
       const files = req.files
-      console.log(files)
+      console.log(files);
+      console.log("####################");
+      const key = Object.keys(files)[0];
+      const uploadObject = files[key];
+      
+      console.log(uploadObject.md5);
+      //create job id from md5 video hash and a salt to make it unique
+      currentJobID = createJobID(uploadObject.md5);
+      
+      //create folder if not exist for the job
+      createJobFolder(__dirname,currentJobID);
 
-      return res.json({status: 'logged', message: 'logged'})
+      //creat jobpath
+      const jobPath = path.join('jobs',currentJobID)
+
+      //write files to system for processing of the pipeline
+      //create filepath for upload
+      const filepath = path.join(__dirname, jobPath,uploadObject.name)
+      uploadObject.mv(filepath,(err) => {
+        if (err) return res.status(500).json({ status : "error", message: err})
+      })
+      console.log('upload succeeded and folder has been created')
+      
+      //after upload succeeded start pipeline processing
+      
+      return res.json({status: 'success', message: uploadObject.name})
 
     }
 );
