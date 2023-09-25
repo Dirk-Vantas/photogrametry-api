@@ -16,12 +16,8 @@ const jobPath = process.argv[2];
 const videoFilePath = process.argv[3];
 const jobID = process.argv[4];
 
-//console.log(`jobPath: ${jobPath}, filepath:${videoFilePath}`);
-
-
 //set correct cwd
 process.chdir(jobPath);
-
 
 // //Define the ffmpeg command
 const ffmpegCommand = 'ffmpeg';
@@ -109,13 +105,17 @@ function meshroomProcess(){
     
     meshroomProcess.stderr.on('data', (data) => {
         console.error(`meshroom Process stderr: ${data}`);
-        //process.stdout.write(`meshroom Process stderr: ${data}`);
+        
     });
     
     meshroomProcess.stdout.on('data', (data) => {
-        console.log(`meshroom Process stdout: ${data}`);
+        //console.log(`meshroom Process stdout: ${data}`);
     });
 }
 
+//meshalb needs to be installed and added to path for python and python is used to call the script requirements file in doc root
+function meshlabProcess(){
+    const meshlabProcess = spawn(process.env.MESHLAB,)
+}
 
 
