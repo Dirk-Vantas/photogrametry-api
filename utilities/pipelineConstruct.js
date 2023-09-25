@@ -6,6 +6,7 @@
 //meshlab -> postprocess mesh
 //imagemagick -> postprocess texture
 const { spawn } = require('child_process');
+const { exec } = require('child_process');
 const fs = require('fs');
 const { pipeline } = require('stream');
 const path = require("path");
@@ -33,6 +34,15 @@ const meshroomArgs = [
     'frames',
     '--output ',
     'meshroomOutput',
+];
+
+//meshroom args
+const colmapArgs = [
+  '/c',
+  process.env.COLMAP,
+  'automatic_reconstructor',
+  '--workspace_path .',
+  '--image_path ./frames',
 ];
 
 //create folder for frames
@@ -83,39 +93,71 @@ ffmpegProcess.on('close', (code) => {
     process.stdout.write(`${jobID},message,ffmpeg done`);
     process.stdout.write('starting meshroom process');
     //meshroom feature matching and reconstruction
-    meshroomProcess();
-    
+    //meshroomProcess();
+    //switch to colamp for improved performance
+    colmapProcess();    
   } else {
     console.error(`ffmpeg processing process exited with code ${code}`);
   }
 });
 
-function meshroomProcess(){
-    const meshroomProcess = spawn(process.env.MESHROOM,meshroomArgs);
-    meshroomProcess.on('close', (code) => {
-        if (code === 0) {
-          console.log('Video processing completed successfully.');
-          //send message to parent process about status of pipeline
-          process.stdout.write(`${jobID},message,meshroom done`);
-          
-        } else {
-          console.error(`meshroom processing process exited with code ${code}`);
-        }
-      });
-    
-    meshroomProcess.stderr.on('data', (data) => {
-        console.error(`meshroom Process stderr: ${data}`);
+function colmapProcess(){
+  const colmapProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\libs\\COLMAP-3.8-windows-cuda\\COLMAP.bat','automatic_reconstructor', '--image_path ','\\frames',' --workspace_path', '.\\']);
+  // exec("F:\\photogrametry-api\\libs\\COLMAP-3.8-windows-cuda\\COLMAP.bat automatic_reconstructor --image_path frames --workspace_path .", (err, stdout, stderr) => {
+  //   if (err) {
+  //     console.error(err);
+  //     return;
+  //   }
+  //   console.log(stdout);
+  // });
+
+    colmapProcess.on('close', (code) => {
+      if (code === 0) {
+        //console.log('Video processing completed successfully.');
+        //send message to parent process about status of pipeline
+        process.stdout.write(`${jobID},message,meshroom done`);
         
+      } else {
+        console.error(`colmap processing process exited with code ${code}`);
+      }
     });
-    
-    meshroomProcess.stdout.on('data', (data) => {
-        //console.log(`meshroom Process stdout: ${data}`);
-    });
+
+    colmapProcess.stderr.on('data', (data) => {
+      console.error(`mcolmap Process stderr: ${data}`);
+      
+  });
+
+  colmapProcess.stdout.on('data', (data) => {
+      //console.log(`meshroom Process stdout: ${data}`);
+  });
 }
 
+// function meshroomProcess(){
+//     const meshroomProcess = spawn(process.env.MESHROOM,meshroomArgs);
+//     meshroomProcess.on('close', (code) => {
+//         if (code === 0) {
+//           console.log('Video processing completed successfully.');
+//           //send message to parent process about status of pipeline
+//           process.stdout.write(`${jobID},message,meshroom done`);
+          
+//         } else {
+//           console.error(`meshroom processing process exited with code ${code}`);
+//         }
+//       });
+    
+//     meshroomProcess.stderr.on('data', (data) => {
+//         console.error(`meshroom Process stderr: ${data}`);
+        
+//     });
+    
+//     meshroomProcess.stdout.on('data', (data) => {
+//         //console.log(`meshroom Process stdout: ${data}`);
+//     });
+// }
+
 //meshalb needs to be installed and added to path for python and python is used to call the script requirements file in doc root
-function meshlabProcess(){
-    const meshlabProcess = spawn(process.env.MESHLAB,)
-}
+// function meshlabProcess(){
+//     const meshlabProcess = spawn(process.env.MESHLAB,)
+// }
 
 
