@@ -34,9 +34,9 @@ const ffmpegArgs = [
 //meshroom args
 const meshroomArgs = [
     '--input',
-    './frames',
+    'frames',
     '--output ',
-    './meshroomOutput',
+    'meshroomOutput',
 ];
 
 //create folder for frames
