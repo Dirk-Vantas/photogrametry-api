@@ -105,7 +105,7 @@ function meshroomProcess(){
     const meshroomProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\utilities\\meshroomWrapper.bat']);
     meshroomProcess.on('close', (code) => {
         if (code === 0) {
-          console.log('Video processing completed successfully.');
+          console.log('mesh reconstruction completed successfully.');
           //send message to parent process about status of pipeline
           process.stdout.write(`${jobID},message,meshroom done`);
           

@@ -62,7 +62,7 @@ app.post('/upload',
       //write files to system for processing of the pipeline
       //create filepath for upload
       const filepath = path.join(__dirname, jobPath,uploadObject.name)
-      //!!!!Upload disabled for debugging dont want my hard drive to explode :)
+      
       uploadObject.mv(filepath,(err) => {
         if (err) return res.status(500).json({ status : "error", message: err})
       })

@@ -35,10 +35,18 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
         var messageID = String(data).split(',')[0];
         var message = String(data).split(',')[1];
         var messageBody = String(data).split(',')[2];
+        
         if (message == 'message'){
+          if(messageBody == 'meshroom done'){
             console.log(`message recieved :D : ${messageBody}`);
             runningProcesses[messageID]['pipeline'] = messageBody;
             console.log(runningProcesses);
+          }
+          else{
+            console.log(`message recieved :D : ${messageBody}`);
+            runningProcesses[messageID]['pipeline'] = messageBody;
+            console.log(runningProcesses);
+          } 
         }
       });
       
