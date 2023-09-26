@@ -1,0 +1,1 @@
+F:\photogrametry-api\libs\Meshroom-2023.2.0\meshroom_batch --input ./frames --output ./meshroomOutput
