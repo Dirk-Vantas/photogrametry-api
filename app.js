@@ -29,6 +29,11 @@ app.get("/", (req,res) => {
   res.sendFile(path.join(__dirname, "uploadTest.html"));
 });
 
+app.get("/debug", (req,res) => {
+  console.log('logged');
+  return res.json({status: 'success'});
+});
+
 //? maybe add middleware to check if file is too big and if files have
 //  been supplied propely
 
@@ -36,6 +41,7 @@ app.get("/", (req,res) => {
 app.post('/upload',
     fileUpload({createParentPath:true}),
     (req,res)=> {
+      console.log(req);
       //get the files from the request
       const files = req.files
       console.log(files);

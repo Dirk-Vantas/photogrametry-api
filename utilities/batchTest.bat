@@ -1,1 +1,0 @@
-F:\photogrametry-api\libs\COLMAP-3.8-windows-cuda\COLMAP.bat automatic_reconstructor --image_path frames --workspace_path .

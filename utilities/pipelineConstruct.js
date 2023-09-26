@@ -101,40 +101,8 @@ ffmpegProcess.on('close', (code) => {
   }
 });
 
-function colmapProcess(){
-  const colmapWrapperProcess = spawn('python.exe',['..\\..\\utilities\\colmapWrapper.py'])
-  //const colmapProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\libs\\COLMAP-3.8-windows-cuda\\COLMAP.bat','automatic_reconstructor', '--image_path ','\\frames',' --workspace_path', '.\\']);
-  // exec("F:\\photogrametry-api\\libs\\COLMAP-3.8-windows-cuda\\COLMAP.bat automatic_reconstructor --image_path frames --workspace_path .", (err, stdout, stderr) => {
-  //   if (err) {
-  //     console.error(err);
-  //     return;
-  //   }
-  //   console.log(stdout);
-  // });
-
-  colmapWrapperProcess.on('close', (code) => {
-    if (code === 0) {
-      //console.log('Video processing completed successfully.');
-      //send message to parent process about status of pipeline
-      process.stdout.write(`${jobID},message,meshroom done`);
-      
-    } else {
-      console.error(`colmap processing process exited with code ${code}`);
-    }
-  });
-
-  colmapWrapperProcess.stderr.on('data', (data) => {
-    console.error(`mcolmap Process stderr: ${data}`);  
-  });
-
-  colmapWrapperProcess.stdout.on('data', (data) => {
-      //console.log(`meshroom Process stdout: ${data}`);
-  });
-}
-
 function meshroomProcess(){
-    //const meshroomProcess = spawn('cmd.exe',['/c',process.env.MESHROOM,'--input ','./frames',' --output','./meshroomOutput']);
-    const meshroomProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\utilities\\meshroomTest.bat']);
+    const meshroomProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\utilities\\meshroomWrapper.bat']);
     meshroomProcess.on('close', (code) => {
         if (code === 0) {
           console.log('Video processing completed successfully.');
@@ -145,14 +113,9 @@ function meshroomProcess(){
           console.error(`meshroom processing process exited with code ${code}`);
         }
       });
-    
+
     meshroomProcess.stderr.on('data', (data) => {
-        console.error(`meshroom Process stderr: ${data}`);
-        
-    });
-    
-    meshroomProcess.stdout.on('data', (data) => {
-        //console.log(`meshroom Process stdout: ${data}`);
+        console.error(`meshroom Process stderr: ${data}`); 
     });
 }
 
