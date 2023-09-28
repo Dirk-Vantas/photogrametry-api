@@ -20,7 +20,7 @@ const jobID = process.argv[4];
 //set correct cwd
 process.chdir(jobPath);
 
-// //Define the ffmpeg command
+// Define the ffmpeg command
 const ffmpegCommand = 'ffmpeg';
 const ffmpegArgs = [
   '-i', path.basename(videoFilePath),  // Input video file path "basename gets the filename"
@@ -28,7 +28,7 @@ const ffmpegArgs = [
   'frames/frame_%04d.png', // Output file pattern (change as needed)
 ];
 
-//meshroom args
+// meshroom args
 const meshroomArgs = [
     '--input',
     'frames',
@@ -80,26 +80,27 @@ if (err) {
 // Spawn the ffmpeg process
 const ffmpegProcess = spawn(ffmpegCommand,ffmpegArgs);
 
-// //error reporting to the main console
+//pipe stdout to console
 ffmpegProcess.stderr.on('data', (data) => {
     console.error(`ffmpeg stderr: ${data}`);
   });
 
-//when ffmpeg supprocess has finished send message to pipeline manager to update status dictionary
+//when ffmpeg sup process has finished send message to pipeline manager to update status dictionary
 ffmpegProcess.on('close', (code) => {
   if (code === 0) {
+
     console.log('Video processing completed successfully.');
     //send message to parent process about status of pipeline
     process.stdout.write(`${jobID},message,ffmpeg done`);
-    process.stdout.write('starting meshroom process');
+
     //meshroom feature matching and reconstruction
     meshroomProcess();
-    //switch to colamp for improved performance
-    //colmapProcess(); too slow :( maybe limit to 20 images or 10    
+
   } else {
     console.error(`ffmpeg processing process exited with code ${code}`);
   }
 });
+
 
 function meshroomProcess(){
     const meshroomProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\utilities\\meshroomWrapper.bat']);
@@ -108,14 +109,14 @@ function meshroomProcess(){
           console.log('mesh reconstruction completed successfully.');
           //send message to parent process about status of pipeline
           process.stdout.write(`${jobID},message,meshroom done`);
-          
+
         } else {
           console.error(`meshroom processing process exited with code ${code}`);
         }
       });
 
     meshroomProcess.stderr.on('data', (data) => {
-        console.error(`meshroom Process stderr: ${data}`); 
+        console.error(`meshroom Process stderr: ${data}`);
     });
 }
 
