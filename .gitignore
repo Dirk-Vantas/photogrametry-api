@@ -1,4 +1,5 @@
 /venv*
 /jobs*
-/node_modules/*
+
 /libs/*
+node_modules
