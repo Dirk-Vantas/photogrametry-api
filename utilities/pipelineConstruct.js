@@ -115,9 +115,9 @@ function meshroomProcess(){
         }
       });
 
-    meshroomProcess.stderr.on('data', (data) => {
-        console.error(`meshroom Process stderr: ${data}`);
-    });
+    // meshroomProcess.stderr.on('data', (data) => {
+    //     console.error(`meshroom Process stderr: ${data}`);
+    // });
 }
 
 //meshalb needs to be installed and added to path for python and python is used to call the script requirements file in doc root

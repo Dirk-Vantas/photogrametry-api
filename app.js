@@ -18,7 +18,15 @@ const app = express();
 app.use(express.json());
 
 // Map to store information about running video processes
-const runningProcesses = [];
+var runningProcesses = [];
+
+runningProcesses['testEntry'] = {
+  jobID:'randomJobID',
+  process:'testProcess',
+  status:"running",
+  pipeline:"started",
+  startTime: new Date(),
+};
 
 app.listen(PORT, () => {
     console.log("Server Listening on PORT:", PORT);
@@ -78,3 +86,9 @@ app.post('/upload',
 
     }
 );
+
+app.get('/status', (req, res) => {
+  //console.log(runningProcesses)
+  res.json(Object.values(runningProcesses)); 
+  
+});
