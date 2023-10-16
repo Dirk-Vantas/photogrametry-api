@@ -23,9 +23,18 @@
             </h1>
 
             <br />
-            <input type="file" id="BtnFile" class="file-input file-input-bordered file-input-primary" accept="video/*" />
+            <form id="uploadForm" class="w-full">
+                <input type="file" id="BtnFile" class="file-input file-input-bordered file-input-primary"
+                    accept="video/*" />
+
+                <button class="btn btn-primary">Upload Video</button>
+            </form>
             <br />
-            <a href="example-GLTFs/adamHead.gltf" class="btn btn-primary" download="proposed_file_name">Download</a>
+            <h2 id="status">Status:</h2>
+            <br />
+            <h3 id="msg">Message:</h3>
+            <br />
+            <a href="example-GLTFs/adamHead.gltf" class="btn btn-primary" download="proposed_file_name">Download 3D Model</a>
             <br />
             <div id="aSide" class="bg-base-300">
                 <model-viewer class="" src="example-GLTFs/adamHead.gltf" alt="VR Headset" auto-rotate camera-controls ar
