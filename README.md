@@ -1,15 +1,28 @@
 # Photogrammetry API
 
 Node.js API for a photogrammetry service based on Meshroom photogrammetry by AliceVision.
+**Platform Support**: Currently, only the Windows version of libraries is supported.
 
 ## Required Libraries
 
-- **Environment File**: Consider using a `.env` file to handle file paths.
-- **Platform Support**: Currently, only the Windows version of libraries is supported.
 - **Node.js**: Required to run the API.
 - **FFmpeg**: Required for frame extraction from the videos.
 - **Meshroom**: Meshroom-2023.2.0 is used for feature extraction, image matching, sparse cloud creation, and meshing.
-- **MeshLab**: Used for post-processing of the mesh.
+- **MeshLab**: Used for post-processing of the mesh. (currently not implemented)
+- **apache**: webserver to server frontend
+
+## installation with frontend
+
+- install all required libraries from the Require libraries section
+- start node server instance of the project foler after installing the project package with "npm install"
+- install a nvidia gpu into your system if you have one, and at the moment only windows is suported since a lot of libraries use wrapper files while starting subprocesses
+- install a webserver (XAMPP)
+- change document root to the root of the project
+- start webserver and nodejs instance of the project with "npm start"
+- load webpage that is now being hosted
+- enjoy
+
+# Technical documentation when using only the api
 
 ## Endpoints
 
