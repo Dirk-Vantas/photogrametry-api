@@ -3,6 +3,7 @@ const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv")
 //const multer = require('multer');
 const path = require("path");
+var cors = require('cors');
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 // Map to store information about running video processes
 var runningProcesses = [];
@@ -27,6 +29,25 @@ runningProcesses['testEntry'] = {
   pipeline:"started",
   startTime: new Date(),
 };
+
+app.use(function (req, res, next) {
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Pass to next layer of middleware
+  next();
+});
 
 app.listen(PORT, () => {
     console.log("Server Listening on PORT:", PORT);
@@ -94,9 +115,10 @@ app.post('/upload',
 app.get('/status/:hashParam?', (req, res) => {
   
   //set correct repsonse headers to allow remote orgin to recive success message :)
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
+  res.setHeader('Access-Control-Allow-Credentials', true); // If needed
   
   if (req.params.hashParam){
     res.json(Object.values(runningProcesses[req.params.hashParam])); 
