@@ -1,24 +1,24 @@
-# photogramatry-api
-Node.js API for a photgramatry service based on meshroom photogrametry by alicevision
+# Photogrammetry API
 
-reuqired libraries:
+Node.js API for a photogrammetry service based on Meshroom photogrammetry by AliceVision.
 
-considering a .env file to handle filepaths
-right now only windows version of liraries supported
+## Required Libraries
 
-node.js to run api
-ffmpeg || for frameextraction from the videos
-meshroom || Meshroom-2023.2.0 to run feature extraction, imagematching, sparce cloud creation and meshing
-meshlab || for post processing of the mesh 
+- **Environment File**: Consider using a `.env` file to handle file paths.
+- **Platform Support**: Currently, only the Windows version of libraries is supported.
+- **Node.js**: Required to run the API.
+- **FFmpeg**: Required for frame extraction from the videos.
+- **Meshroom**: Meshroom-2023.2.0 is used for feature extraction, image matching, sparse cloud creation, and meshing.
+- **MeshLab**: Used for post-processing of the mesh.
 
-Endpoints:
+## Endpoints
 
-"/"           to get debug fileupload interface
-"/upload"     to uploade video files and get md5 has of video file that acts as a job id 
-"/listJobs"   to list all queued jobs
-"/listJob"    to list speciefic job, needs a job id that is created by the fileuplad "md 5 hash of video file maybe?"
-"/getOutput"  get output of specific job after its finished provided the md5 hash of video file is supplied
+- **"/"**: Provides a debug file upload interface.
+- **"/upload"**: Allows you to upload video files and get an MD5 hash of the video file, which acts as a job ID.
+- **"/status"**: Lists all queued jobs.
+- **"/getModel"**: Retrieves the output of a specific job after it's finished, provided the MD5 hash of the video file is supplied.
 
-pipeline:
-uploaded videos will be saved in the '/jobs' folder to be processes by the pipeline
+## Pipeline
+Uploaded videos will be saved in the '/jobs' folder to be processed by the pipeline.
+
 
