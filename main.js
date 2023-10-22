@@ -37,18 +37,10 @@ const sendFiles = async () => {
 
     loading.innerHTML = ''
 
-    setInterval(function() {
+    const intervalId = setInterval(function() {
         loadProgressbar(json?.hash);
     }, 5000);
 
-    document.getElementById('viewer').removeAttribute("src")
-    document.getElementById('viewer').removeAttribute("ios-src")
-    document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${json?.hash}/model.glb`)
-    document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${json?.hash}/model.glb`)
-    enableDownloadButton()
-
-    bar.removeAttribute('value')
-    bar.setAttribute('value', '0')
     //    const h3 = document.getElementById('msg')
     //    h3.textContent = `Message: ${json?.message}`
 
@@ -70,7 +62,16 @@ const loadProgressbar = async (formbody) => {
     bar.setAttribute('value', json[3])
     
     if (json[3] == 100) {
-        clearInterval()
+        //set new shit
+        document.getElementById('viewer').removeAttribute("src")
+        document.getElementById('viewer').removeAttribute("ios-src")
+        document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${formbody}/model.glb`)
+        document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${formbody}/model.glb`)
+        enableDownloadButton()
+
+        bar.removeAttribute('value')
+        bar.setAttribute('value', '0')
+        clearInterval(intervalId);
     }
 }
 
