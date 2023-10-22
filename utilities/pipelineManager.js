@@ -45,19 +45,23 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
         
         if (message == 'message'){
 
-            
-
-            runningProcesses[messageID]['pipeline'] = messageBody;
-            console.log(`message recieved :D : "${messageBody}"`);
-            //console.log(runningProcesses);
-
-            // updateRunningProcess(messageID,messageBody, () => {
-            //     console.log('######## updated pushed ##########')
-            // })
-            
-
+          switch (messageBody) {
+            case 'ffmpeg done':
+              runningProcesses[messageID]['pipeline'] = messageBody;
+              console.log(`message recieved :D : "${messageBody}"`);
+              break;
+            case 'meshroom done':
+              runningProcesses[messageID]['pipeline'] = messageBody;
+              runningProcesses[messageID]['status'] = 'done';
+              console.log(`message recieved :D : "${messageBody}"`);
+              break;
+            default:
+              console.log(`Sorry, couldnt handle message: ${expr}.`);
+          }
         }
       });
+
+      
 
       videoProcessing.stderr.on('data', (data) => {
         console.error(`pipeline stderr: ${data}`);
@@ -69,5 +73,6 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
 
 
 }
+
 
 module.exports = createPipelineProcess;

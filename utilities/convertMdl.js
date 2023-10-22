@@ -17,7 +17,7 @@ const convert2gltf = ((rootDir,jobID) => {
 
 
 
-};
+});
 
 
 

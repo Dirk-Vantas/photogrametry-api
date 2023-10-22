@@ -87,10 +87,13 @@ app.post('/upload',
     }
 );
 
-app.get('/status', (req, res) => {
-  //console.log(runningProcesses)
-  res.json(Object.values(runningProcesses)); 
-  
+app.get('/status/:hashParam?', (req, res) => {
+  if (req.params.hashParam){
+    res.json(Object.values(runningProcesses[req.params.hashParam])); 
+  }
+  else{
+    res.json(Object.values(runningProcesses)); 
+  } 
 });
 
 // Define an endpoint that takes a hash (object) as a parameter
