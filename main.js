@@ -1,5 +1,5 @@
 const form = document.getElementById('uploadForm')
-
+const loading = document.getElementById('loading')
 const downloadButton = document.getElementById('download')
 
 downloadButton.className = "btn btn-primary btn-outline btn-disabled"
@@ -13,6 +13,8 @@ const sendFiles = async () => {
 
     downloadButton.className = "btn btn-primary btn-outline btn-disabled"
     downloadButton.ariaDisabled = "false"
+
+    loading.innerHTML = '<span class="loading loading-spinner loading-md"></span>'
     // Object
     const myFiles = document.getElementById('BtnFile').files
 
@@ -30,7 +32,10 @@ const sendFiles = async () => {
     const json = await response.json()
 
     const h2 = document.getElementById('status')
-    h2.textContent = `Status: ${json?.status}`
+    h2.textContent = `Uploadstate: ${json?.status}`
+
+    loading.innerHTML = ''
+
     setInterval(function() {
         loadProgressbar(json?.hash);
     }, 20000);
@@ -43,7 +48,6 @@ const sendFiles = async () => {
 }
 
 const loadProgressbar = async (formbody) => {
-    console.log(formbody)
     const response = await fetch('http://dwaregateway.ddns.net:3000/status', {
         method: 'POST',
         body: formbody
@@ -53,7 +57,7 @@ const loadProgressbar = async (formbody) => {
 
     console.log(json);
     
-
+    
 }
 
 function enableDownloadButton() {
