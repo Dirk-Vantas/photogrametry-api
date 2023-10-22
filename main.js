@@ -39,7 +39,7 @@ const sendFiles = async () => {
 
     setInterval(function() {
         loadProgressbar(json?.hash);
-    }, 20000);
+    }, 5000);
 
 
     //    const h3 = document.getElementById('msg')
