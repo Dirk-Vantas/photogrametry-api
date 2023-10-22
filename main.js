@@ -60,7 +60,7 @@ const loadProgressbar = async (formbody) => {
     console.log(json[3]);
     
     bar.removeAttribute('value')
-    bar.addAttribute('value', json[3])
+    bar.setAttribute('value', json[3])
     
     if (json[3] == 100) {
         enableDownloadButton()
