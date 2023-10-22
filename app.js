@@ -37,6 +37,10 @@ app.get("/", (req,res) => {
   res.sendFile(path.join(__dirname, "uploadTest.html"));
 });
 
+app.get("/index", (req,res) => {
+  res.sendFile(path.join(__dirname, "/index.html"));
+});
+
 app.get("/debug", (req,res) => {
   console.log('logged');
   return res.json({status: 'success'});
@@ -52,8 +56,7 @@ app.post('/upload',
       console.log(req);
       //get the files from the request
       const files = req.files
-      console.log(files);
-      console.log("####################");
+      
       const key = Object.keys(files)[0];
       const uploadObject = files[key];
       
@@ -108,6 +111,9 @@ app.get('/getModel/:hashParam', (req, res) => {
   if (!runningProcesses[hashParam]['status']=== 'done'){
     res.status(400).send('Bad Request: job is not done wait');
   }
-  //start donwload procedure
+  //serve path to model
+  const modelPath = `jobs/${hashParam}/model.glb`;
+
+  res.json({status: 'success', modelPath : modelPath})
   
 });

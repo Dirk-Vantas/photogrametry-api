@@ -21,9 +21,9 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
     // Add the process to the runningProcesses map using the video processing ID
     runningProcesses[jobID] = {
         jobID:jobID,
-        //process:videoProcessing,
         status:"running",
         pipeline:"started",
+        progress:0,
         startTime: new Date(),
     };
 
@@ -48,16 +48,19 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
           switch (messageBody) {
             case 'ffmpeg done':
               runningProcesses[messageID]['pipeline'] = messageBody;
+              runningProcesses[messageID]['progress'] = 20;
               console.log(`message recieved :D : "${messageBody}"`);
               break;
             case 'meshroom done':
               runningProcesses[messageID]['pipeline'] = messageBody;
+              runningProcesses[messageID]['progress'] = 80;
               console.log(`message recieved :D : "${messageBody}"`);
               break;
             //this is the last step and job should be labeled as done after it
             case 'conversion done':
               runningProcesses[messageID]['pipeline'] = messageBody;  
               runningProcesses[messageID]['status'] = 'done';
+              runningProcesses[messageID]['progress'] = 100;
               console.log(`message recieved :D : "${messageBody}"`);
               break;
             default:
