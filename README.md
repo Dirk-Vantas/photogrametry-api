@@ -21,4 +21,9 @@ Node.js API for a photogrammetry service based on Meshroom photogrammetry by Ali
 ## Pipeline
 Uploaded videos will be saved in the '/jobs' folder to be processed by the pipeline.
 
+## TODO:
+
+- add quality setting to the upload endpoint so that  the quality of the model (number of frames used) can be tweaked
+- add meshlab postprocessing
+- add small database for running processes instead of storing them in memory
 
