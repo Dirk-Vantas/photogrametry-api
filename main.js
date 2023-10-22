@@ -48,9 +48,10 @@ const sendFiles = async () => {
 }
 
 const loadProgressbar = async (formbody) => {
-    const response = await fetch('http://dwaregateway.ddns.net:3000/status', {
-        method: 'GET',
-        body: formbody
+
+    var url = 'http://dwaregateway.ddns.net:3000/status/' + formbody
+    const response = await fetch(url, {
+        method: 'GET'
     })
 
     const json = await response.json()
