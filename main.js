@@ -1,6 +1,7 @@
 const form = document.getElementById('uploadForm')
 const loading = document.getElementById('loading')
 const downloadButton = document.getElementById('download')
+var bar = document.getElementById('progressBar')
 
 downloadButton.className = "btn btn-primary btn-outline btn-disabled"
 downloadButton.ariaDisabled = "false"
@@ -58,7 +59,13 @@ const loadProgressbar = async (formbody) => {
 
     console.log(json[3]);
     
+    bar.removeAttribute('value')
+    bar.removeAttribute('value', json[3])
     
+    if (json[3] == 100) {
+        enableDownloadButton()
+        clearInterval()
+    }
 }
 
 function enableDownloadButton() {
