@@ -41,6 +41,11 @@ const sendFiles = async () => {
         loadProgressbar(json?.hash);
     }, 5000);
 
+    document.getElementById('viewer').removeAttribute("src")
+    document.getElementById('viewer').removeAttribute("ios-src")
+    document.getElementById('viewer').setAttribute("src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
+    document.getElementById('viewer').setAttribute("ios-src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
+    enableDownloadButton()
 
     //    const h3 = document.getElementById('msg')
     //    h3.textContent = `Message: ${json?.message}`
@@ -63,11 +68,6 @@ const loadProgressbar = async (formbody) => {
     bar.setAttribute('value', json[3])
     
     if (json[3] == 100) {
-        document.getElementById('viewer').removeAttribute("src")
-        document.getElementById('viewer').removeAttribute("ios-src")
-        document.getElementById('viewer').setAttribute("src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
-        document.getElementById('viewer').setAttribute("ios-src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
-        enableDownloadButton()
         clearInterval()
     }
 }
