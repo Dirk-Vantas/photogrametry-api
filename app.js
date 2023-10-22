@@ -37,9 +37,7 @@ app.get("/", (req,res) => {
   res.sendFile(path.join(__dirname, "uploadTest.html"));
 });
 
-app.get("/index", (req,res) => {
-  res.sendFile(path.join(__dirname, "/index.html"));
-});
+
 
 app.get("/debug", (req,res) => {
   console.log('logged');
@@ -82,15 +80,24 @@ app.post('/upload',
       //after upload succeeded start pipeline processing
       // Spawn a child process to run the video processing pipeline
       createPipelineProcess(currentJobID,jobPath,filepath,runningProcesses);
-
       
+      //set correct repsonse headers to allow remote orgin to recive success message :)
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
       
-      return res.json({status: 'success', message: uploadObject.name})
+      return res.json({status: 'success', message: uploadObject.name, hash: currentJobID})
 
     }
 );
 
 app.get('/status/:hashParam?', (req, res) => {
+  
+  //set correct repsonse headers to allow remote orgin to recive success message :)
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  
   if (req.params.hashParam){
     res.json(Object.values(runningProcesses[req.params.hashParam])); 
   }
@@ -114,6 +121,10 @@ app.get('/getModel/:hashParam', (req, res) => {
   //serve path to model
   const modelPath = `jobs/${hashParam}/model.glb`;
 
+  //set correct repsonse headers to allow remote orgin to recive success message :)
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.json({status: 'success', modelPath : modelPath})
   
 });
