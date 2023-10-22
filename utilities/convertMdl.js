@@ -1,25 +1,19 @@
 const obj2gltf = require("obj2gltf");
 const fs = require("fs");
 
-const convert2gltf = ((rootDir,jobID) => {
+const convert2gltf = ((modelPath,modelName) => {
 
     const options = {
         binary: true,
       };
     
     //create correct path
-    const jobsDir = path.join(rootDir, 'jobs');
+    const path = `${modelPath}/${modelName}`;
     
-    
-    obj2gltf("model.obj", options).then(function (glb) {
+    //start conversion on modelpath usually meshroomOutput 
+    obj2gltf(path, options).then(function (glb) {
     fs.writeFileSync("model.glb", glb);
     });
-
-
-
 });
-
-
-
 
 module.exports = convert2gltf;

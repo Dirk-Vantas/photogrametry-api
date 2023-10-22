@@ -1,0 +1,1 @@
+ obj2gltf.cmd -i .\meshroomOutput\texturedMesh.obj -o .\model.glb -b

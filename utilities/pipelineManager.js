@@ -38,10 +38,10 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
     videoProcessing.stdout.on('data', (data) => {
         //get message from stout of childprocess for interprocess intercommunication
         //destructered stamenet
-        let debugString = String(data)
-        console.log(`handeled stdout : ${debugString}`)
+        //let debugString = String(data)
+        //console.log(`handeled stdout : ${debugString}`)
         let [messageID,message,messageBody] = String(data).split(',');
-        console.log(`extracted sub strings  || ${messageID} || ${messageBody}`)
+        //console.log(`extracted sub strings  || ${messageID} || ${messageBody}`)
         
         if (message == 'message'){
 
@@ -52,6 +52,11 @@ const createPipelineProcess = (jobID,jobPath,filepath,runningProcesses) => {
               break;
             case 'meshroom done':
               runningProcesses[messageID]['pipeline'] = messageBody;
+              console.log(`message recieved :D : "${messageBody}"`);
+              break;
+            //this is the last step and job should be labeled as done after it
+            case 'conversion done':
+              runningProcesses[messageID]['pipeline'] = messageBody;  
               runningProcesses[messageID]['status'] = 'done';
               console.log(`message recieved :D : "${messageBody}"`);
               break;

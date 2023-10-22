@@ -10,6 +10,7 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const { pipeline } = require('stream');
 const path = require("path");
+const convert2gltf = require('./convertMdl');
 require('dotenv').config()
 
 // Get the video file path from command-line arguments
@@ -109,19 +110,40 @@ function meshroomProcess(){
           console.log('mesh reconstruction completed successfully.');
           //send message to parent process about status of pipeline
           process.stdout.write(`${jobID},message,meshroom done`);
+          //run conversion
+          conversion();
 
         } else {
-          console.error(`meshroom processing process exited with code ${code}`);
+          console.error(`model processing process exited with code ${code}`);
         }
       });
+}
 
-    // meshroomProcess.stderr.on('data', (data) => {
-    //     console.error(`meshroom Process stderr: ${data}`);
-    // });
+//convert model to glb format
+function conversion(){
+  const conversionProcess = spawn('cmd.exe',['/c','F:\\photogrametry-api\\utilities\\conversionWrapper.bat']);
+  console.log('conversion started');
+  conversionProcess.on('close', (code) => {
+      if (code === 0) {
+        console.log('conversion done');
+        //send message to parent process about status of pipeline
+        process.stdout.write(`${jobID},message,conversion done`);
+        
+      } else {
+        console.error(`model processing process exited with code ${code}`);
+      }
+    });
+
+    conversionProcess.stderr.on('data', (data) => {
+      console.error(`conversion stderr: ${data}`);
+    });
+
+    conversionProcess.stdout.on('data', (data) => {
+      console.error(`conversion stderr: ${data}`);
+    });
 }
 
 //TODO add meshlab
-
 //meshalb needs to be installed and added to path for python and python is used to call the script requirements file in doc root
 // function meshlabProcess(){
 //     const meshlabProcess = spawn(process.env.MESHLAB,)

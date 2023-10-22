@@ -99,17 +99,15 @@ app.get('/status/:hashParam?', (req, res) => {
 // Define an endpoint that takes a hash (object) as a parameter
 app.get('/getModel/:hashParam', (req, res) => {
   // Retrieve the hash parameter from the URL
-  const hashParam = req.params.hashParam;
-
-  // Parse the hash parameter into an object (assuming it's a JSON string)
-  let hashObject;
-  try {
-    hashObject = JSON.parse(hashParam);
-  } catch (error) {
-    return res.status(400).json({ error: 'Invalid JSON format for hash parameter' });
+  // if no parameter given send error
+  if (!req.params.hashParam){
+    res.status(400).send('Bad Request: no job hash given');
   }
-
-  // Now you can work with the hashObject as a JavaScript object
-  // For example, you can send it back as a response
-  res.json({ receivedHash: hashObject });
+  const hashParam = req.params.hashParam;
+  //check if specified job is done
+  if (!runningProcesses[hashParam]['status']=== 'done'){
+    res.status(400).send('Bad Request: job is not done wait');
+  }
+  //start donwload procedure
+  
 });
