@@ -43,8 +43,8 @@ const sendFiles = async () => {
 
     document.getElementById('viewer').removeAttribute("src")
     document.getElementById('viewer').removeAttribute("ios-src")
-    document.getElementById('viewer').setAttribute("src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
-    document.getElementById('viewer').setAttribute("ios-src", "http://dwaregateway.ddns.net/jobs/44e61b45fb9e82dfc3213adebf1d05b1974ab4f87a867066a341c53bb69068dc354762ab91cfba9411910ab466cc8b756b8a2202fd4ac77d891c311b7eef87ac/model.glb")
+    document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${json?.hash}/model.glb`)
+    document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${json?.hash}/model.glb`)
     enableDownloadButton()
 
     bar.removeAttribute('value')
