@@ -51,27 +51,35 @@ const sendFiles = async () => {
 
 async function waitForProcess(hash) {
     const done = 100;
+    let status = false;
     return new Promise(resolve => {
       const interval = setInterval(async () => {
         try {
             
-            loadProgressbar(hash)
-          //const response = await makeProgressAPIcall(hash);
-          //console.log('Current value:', response.value);
-          let progress = loadProgressbar(hash);
+            //loadProgressbar(hash)
+            //const response = await makeProgressAPIcall(hash);
+            //console.log('Current value:', response.value);
+            if (status === false){
+                //if status false keep runnign
+                console.log('keep running');
+                let progress = loadProgressbar(hash,status);
+            }
+            else{
+                console.log('DONEDONEDONEDONEDONEDONEDONEDONEDONEDONEDONE')
+            }
 
             
 
-          if (progress == 100) {
-            clearInterval(interval); // Stop the interval when the desired value is found
-            document.getElementById('viewer').removeAttribute("src")
-            document.getElementById('viewer').removeAttribute("ios-src")
-            document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
-            document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
-            enableDownloadButton()
+            if (progress == 100) {
+                clearInterval(interval); // Stop the interval when the desired value is found
+                document.getElementById('viewer').removeAttribute("src")
+                document.getElementById('viewer').removeAttribute("ios-src")
+                document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
+                document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
+                enableDownloadButton()
 
-            bar.removeAttribute('value')
-            bar.setAttribute('value', '0')
+                bar.removeAttribute('value')
+                bar.setAttribute('value', '0')
 
             console.log('process Done');
 
@@ -80,7 +88,7 @@ async function waitForProcess(hash) {
         } catch (error) {
           console.error('API call failed:', error);
         }
-      }, 1000); // Repeat the API call every 1 second
+      }, 3000); // Repeat the API call every 3 second
     });
   }
 
@@ -91,7 +99,7 @@ function makeProgressAPIcall(hash) {
       .then(response => response.json());
   }
 
-const loadProgressbar = async (hash) => {
+const loadProgressbar = async (hash,status) => {
 
     var url = 'http://dwaregateway.ddns.net:3000/status/' + hash
     const response = await fetch(url, {
@@ -107,15 +115,20 @@ const loadProgressbar = async (hash) => {
 
     if (json[3] == 100){
         console.log('done');
+
+        
         //document.getElementById('viewer').removeAttribute("src");
         enableDownloadButton(hash);
         
         //document.getElementById('viewer').removeAttribute("ios-src")
 
         //need this to reload
-        document.getElementById('viewer').setAttribute("src", `/jobs/${hash}/model.glb`);
-        document.getElementById('viewer').setAttribute("ios-src", `/jobs/${hash}/model.glb`);
+        document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`);
+        document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`);
 
+        let container = document.getElementById("viewer");
+        let content = container.innerHTML;
+        container.innerHTML= content; 
 
         
 
@@ -139,8 +152,8 @@ function enableDownloadButton(hash) {
     downloadButton.className = "btn btn-primary"
     downloadButton.ariaDisabled = true;
 
-    document.getElementById('download').setAttribute("src",`/jobs/${hash}/model.glb`);
-    document.getElementById('download').setAttribute("href",`/jobs/${hash}/model.glb`);
+    document.getElementById('download').setAttribute("src",`http://dwaregateway.ddns.net/jobs/${hash}/model.glb`);
+    document.getElementById('download').setAttribute("href",`http://dwaregateway.ddns.net/jobs/${hash}/model.glb`);
     document.getElementById('BtnFile').removeAttribute('disabled')
     document.getElementById('UploadFile').className = "btn btn-primary"
 }
