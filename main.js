@@ -54,14 +54,15 @@ async function waitForProcess(hash) {
     return new Promise(resolve => {
       const interval = setInterval(async () => {
         try {
-          const response = await makeProgressAPIcall(json?.hash);
-          console.log('Current value:', response.value);
-          let progress = response.json[3];
+            
+            loadProgressbar(hash)
+          //const response = await makeProgressAPIcall(hash);
+          //console.log('Current value:', response.value);
+          let progress = loadProgressbar(hash);
 
-            bar.removeAttribute('value')
-            bar.setAttribute('value', progress)
+            
 
-          if (progress === done) {
+          if (progress == 100) {
             clearInterval(interval); // Stop the interval when the desired value is found
             document.getElementById('viewer').removeAttribute("src")
             document.getElementById('viewer').removeAttribute("ios-src")
@@ -90,9 +91,9 @@ function makeProgressAPIcall(hash) {
       .then(response => response.json());
   }
 
-const loadProgressbar = async (formbody) => {
+const loadProgressbar = async (hash) => {
 
-    var url = 'http://dwaregateway.ddns.net:3000/status/' + formbody
+    var url = 'http://dwaregateway.ddns.net:3000/status/' + hash
     const response = await fetch(url, {
         method: 'GET'
     })
@@ -100,21 +101,46 @@ const loadProgressbar = async (formbody) => {
     const json = await response.json()
 
     console.log(json[3]);
-    
+
     bar.removeAttribute('value')
     bar.setAttribute('value', json[3])
-    
-    if (json[3] == 100) {
-        //set new shit
+
+    if (json[3] == 100){
+        console.log('done');
+        //document.getElementById('viewer').removeAttribute("src");
+        enableDownloadButton(hash);
         
-        clearInterval(intervalId);
+        //document.getElementById('viewer').removeAttribute("ios-src")
+
+        //need this to reload
+        document.getElementById('viewer').setAttribute("src", `/jobs/${hash}/model.glb`);
+        document.getElementById('viewer').setAttribute("ios-src", `/jobs/${hash}/model.glb`);
+
+
+        
+
+        bar.removeAttribute('value');
+        bar.setAttribute('value', '0');
     }
+
+    return json[3];
+    
+    // bar.removeAttribute('value')
+    // bar.setAttribute('value', json[3])
+    
+    // if (json[3] == 100) {
+    //     //set new shit
+        
+    //     clearInterval(intervalId);
+    // }
 }
 
-function enableDownloadButton() {
+function enableDownloadButton(hash) {
     downloadButton.className = "btn btn-primary"
     downloadButton.ariaDisabled = true;
 
+    document.getElementById('download').setAttribute("src",`/jobs/${hash}/model.glb`);
+    document.getElementById('download').setAttribute("href",`/jobs/${hash}/model.glb`);
     document.getElementById('BtnFile').removeAttribute('disabled')
     document.getElementById('UploadFile').className = "btn btn-primary"
 }
