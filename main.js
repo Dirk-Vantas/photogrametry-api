@@ -56,47 +56,24 @@ async function waitForProcess(hash) {
       const interval = setInterval(async () => {
         try {
             
-            //loadProgressbar(hash)
-            //const response = await makeProgressAPIcall(hash);
-            //console.log('Current value:', response.value);
-            if (status === false){
-                //if status false keep runnign
-                console.log('keep running');
-                let progress = loadProgressbar(hash,status);
-            }
-            else{
-                console.log('DONEDONEDONEDONEDONEDONEDONEDONEDONEDONEDONE')
-            }
-
-            
-
-            if (progress == 100) {
+            let progress = await loadProgressbar(hash,status);
+            if (progress === done){
                 clearInterval(interval); // Stop the interval when the desired value is found
-                document.getElementById('viewer').removeAttribute("src")
-                document.getElementById('viewer').removeAttribute("ios-src")
-                document.getElementById('viewer').setAttribute("src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
-                document.getElementById('viewer').setAttribute("ios-src", `http://dwaregateway.ddns.net/jobs/${hash}/model.glb`)
-                enableDownloadButton()
-
+                
                 bar.removeAttribute('value')
                 bar.setAttribute('value', '0')
-
-            console.log('process Done');
-
-            resolve();
-          }
+                console.log('DONEDONEDONEDONEDONEDONEDONEDONEDONEDONEDONE')
+                resolve();
+            }
+            else{
+                console.log('keep running');
+            }
+            
         } catch (error) {
           console.error('API call failed:', error);
         }
       }, 3000); // Repeat the API call every 3 second
     });
-  }
-
-function makeProgressAPIcall(hash) {
-    // Make your API call here and return a promise
-    var url = 'http://dwaregateway.ddns.net:3000/status/' + hash
-    return fetch(url)
-      .then(response => response.json());
   }
 
 const loadProgressbar = async (hash,status) => {
