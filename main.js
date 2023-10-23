@@ -85,7 +85,7 @@ async function waitForProcess(hash) {
 
 function makeProgressAPIcall(hash) {
     // Make your API call here and return a promise
-    var url = 'http://dwaregateway.ddns.net:3000/status/' + formbody
+    var url = 'http://dwaregateway.ddns.net:3000/status/' + hash
     return fetch(url)
       .then(response => response.json());
   }
