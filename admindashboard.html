@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Login-Photogrammetry</title>
@@ -11,43 +12,125 @@
     <link rel="stylesheet" href="css/style.css">
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
     <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
 </head>
-<body>
+
+<body class="flex justify-center items-center">
     <div class="text-center">
         <br>
         <div class="flex flex-col">
             <h1 class="text-3xl font-bold">
                 Admin-Dashboard
             </h1>
+            <div class="divider"></div>
+            <br>
+                <div class="flex justify-center items-center">
+                    <img src="example-GLTFs/1200px-User-admin.png" alt="Trulli" height="128" width="128">
+                </div>
+            <br>
+            <div class="divider"></div>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Password</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- row 1 -->
+                        <tr class="hover">
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>12341234</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 2 -->
+                        <tr class="hover">
+                            <td>2</td>
+                            <td>John D. oe</td>
+                            <td>passwordSecret</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 3 -->
+                        <tr class="hover">
 
-            <br>
-            <form id="uploadForm" class="w-full">
-                <input type="file" id="BtnFile" class="file-input file-input-bordered file-input-primary"
-                    accept="video/*" required>
-                <button class="btn btn-primary" id="UploadFile">Upload Video</button>
-            </form>
-            <br>
-            <div id="loading"></div>
-            <br>
-            <div style="margin: 0 auto; width: 50%; text-align: center;">
-                <progress class="progress progress-primary w-56" id="progressBar" value="0" max="100"></progress>
+                            <td>3</td>
+                            <td>Joe Dohn</td>
+                            <td>iLoveJoeBiden</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-            <br>
-            <h2 id="status">Uploadstate:</h2>
-            <br>
-            <a href="example-GLTFs/adamHead.gltf"
-                class="btn btn-primary" id="download" download="3D-Model.glb" aria-disabled="false">Download 3D
-                Model</a>
-            <br>
-            <div id="aSide" class="bg-base-300">
-                <model-viewer class="" id="viewer" src="example-GLTFs/adamHead.gltf" alt="VR Headset" auto-rotate camera-controls ar
-                    ios-src="example-GLTFs/adamHead.gltf">
-                </model-viewer>
+            <div class="divider"></div>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                        <tr>
+                            <th>DB-ID</th>
+                            <th>uID</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>Foreign Key</th>
+                            <th>Status</th>
+                            <th>File</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- row 1 -->
+                        <tr class="hover">
+                            <td>1</td>
+                            <td>170e74cf32efaea4dcf2eb169b56fc17</td>
+                            <td>Comment 1</td>
+                            <td>12.12.2024 XX:XX:XX</td>
+                            <td>4</td>
+                            <td>online</td>
+                            <td>C:/I/use/unix/based/path.psp</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 2 -->
+                        <tr class="hover">
+                            <td>2</td>
+                            <td>a8587251fd989a3a15a68f1b88b24c2b</td>
+                            <td>Comment 2</td>
+                            <td>12.12.2024 XX:XX:XX</td>
+                            <td>3</td>
+                            <td>online</td>
+                            <td>D:/ecretDir/porn/hah/you/thought.raw</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 3 -->
+                        <tr class="hover">
+
+                            <td>3</td>
+                            <td>720e892022e07cca31dd9391612ac868</td>
+                            <td>Comment 3</td>
+                            <td>12.12.2024 XX:XX:XX</td>
+                            <td>1</td>
+                            <td>offline</td>
+                            <td>G:/programms/fortnite/csgo2/heroin.zip</td>
+                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
         <br>
     </div>
-
-
 </body>
+
 </html>
