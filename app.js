@@ -5,6 +5,11 @@ const dotenv = require("dotenv")
 const path = require("path");
 var cors = require('cors');
 
+const sqlite3 = require('sqlite3').verbose();
+
+// Open a database connection (or create a new one if it doesn't exist)
+const db = new sqlite3.Database('grametry.db');
+
 dotenv.config();
 
 const createJobFolder = require('./utilities/createFolder');
@@ -149,4 +154,36 @@ app.get('/getModel/:hashParam', (req, res) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   res.json({status: 'success', modelPath : modelPath})
   
+});
+
+app.post('/register', (req, res) => {
+
+  const username = req.query.usrnam;
+  const password = req.query.pwd;
+
+  db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?)', [username, password, 1], function(err) {
+    if (err) {
+      res.status(400).send('User couldnt be made')
+      return console.error(err.message);
+    } else {
+      res.status(200).send('User successfully made')
+    }
+  });
+});
+
+app.get('/login', (req, res) => {
+  const id = req.query.id;
+
+  db.all('SELECT benutzername FROM Benutzer WHERE ID = ?', [id], function(err, rows) {
+    if (err) {
+      res.status(400).send('DB Request failed');
+      return console.error(err.message);
+    } else {
+      if (rows.length > 0) {
+        res.status(200).send('true');
+      } else {
+        res.status(400).send('false');
+      }
+    }
+  });
 });
