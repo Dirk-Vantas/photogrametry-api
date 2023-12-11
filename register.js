@@ -4,7 +4,7 @@ var pawdtxt2 = document.getElementById("pwd2");
 const form = document.getElementById('registerForm')
 
 function submitLoginCredentials() {
-    
+    location.replace("login.html")
 }
 
 form.addEventListener('submit', (e) => {
