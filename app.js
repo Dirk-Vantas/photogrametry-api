@@ -161,7 +161,7 @@ app.post('/register', (req, res) => {
   const username = req.query.usrnam;
   const password = req.query.pwd;
 
-  db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?)', [username, password, 1], function(err) {
+  db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function(err) {
     if (err) {
       res.status(400).send('User couldnt be made')
       return console.error(err.message);
@@ -186,4 +186,51 @@ app.get('/login', (req, res) => {
       }
     }
   });
+});
+
+app.get('/users', (req, res) => {
+  db.all('SELECT * FROM Benutzer', [], function (err, rows) {
+    if (err) {
+      res.status(400).send('Couldnt select users')
+      return console.error(err.message);
+    } else {
+      res.status(200).send(rows)
+    }
+  });
+});
+
+app.delete('/users', (req, res) => {
+  const id = req.query.id;
+
+  db.run('DELETE FROM Benutzer WHERE ID = ?', [id], function(err, rows) {
+    console.log(rows)
+    if (err) {
+      res.status(400).send('Delete from Usertable failed')
+      return console.error(err.message);
+    } else {
+      res.status(200).send('Delete succeeded')
+    }
+  });
+});
+
+app.post('/log', (req, res) => {
+  const msg = req.query.msg
+  const aufID = req.query.aID
+
+  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, aID], function(err) {
+    if (err) {
+      res.status(400).send('User couldnt be made')
+      return console.error(err.message);
+    } else {
+      res.status(200).send('User successfully made')
+    }
+  });
+});
+
+app.get('/log', (req, res) => {
+
+});
+
+app.delete('/log', (req, res) => {
+
 });
