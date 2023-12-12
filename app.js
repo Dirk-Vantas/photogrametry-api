@@ -38,7 +38,7 @@ runningProcesses['testEntry'] = {
 app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   // Request methods you wish to allow
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -156,7 +156,7 @@ app.get('/getModel/:hashParam', (req, res) => {
   
 });
 
-app.post('/register', (req, res) => {
+app.post('/users', (req, res) => {
 
   const username = req.query.usrnam;
   const password = req.query.pwd;
@@ -172,17 +172,18 @@ app.post('/register', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const id = req.query.id;
+  const username = req.query.nam;
+  const password = req.query.pwd;
 
-  db.all('SELECT benutzername FROM Benutzer WHERE ID = ?', [id], function(err, rows) {
+  db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function(err, rows) {
     if (err) {
       res.status(400).send('DB Request failed');
       return console.error(err.message);
     } else {
       if (rows.length > 0) {
-        res.status(200).send('true');
+        res.status(200).send(rows);
       } else {
-        res.status(400).send('false');
+        res.status(400).send(rows);
       }
     }
   });
@@ -194,7 +195,11 @@ app.get('/users', (req, res) => {
       res.status(400).send('Couldnt select users')
       return console.error(err.message);
     } else {
-      res.status(200).send(rows)
+      if (rows.length > 0) {
+        res.status(200).send(rows);
+      } else {
+        res.status(400).send('Couldnt get all User');
+      }
     }
   });
 });
@@ -216,8 +221,10 @@ app.delete('/users', (req, res) => {
 app.post('/log', (req, res) => {
   const msg = req.query.msg
   const aufID = req.query.aID
+  const llevel = req.query.llevel
+  const lart = req.query.lart
 
-  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, aID], function(err) {
+  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, Number(aufID), new Date().toLocaleString(), llevel, Number(lart)], function(err) {
     if (err) {
       res.status(400).send('User couldnt be made')
       return console.error(err.message);
@@ -228,9 +235,29 @@ app.post('/log', (req, res) => {
 });
 
 app.get('/log', (req, res) => {
-
+  db.run('SELECT * FROM Log', [], function(err, rows) {
+    if (err) {
+      res.status(400).send('User couldnt be made')
+      return console.error(err.message);
+    } else {
+      if (rows.length > 0) {
+        res.status(200).send(rows);
+      } else {
+        res.status(400).send('Couldnt get Logs');
+      }
+    }
+  });
 });
 
 app.delete('/log', (req, res) => {
+  const ID = req.query.id
 
+  db.run('DELETE FROM Log WHERE ID = ?', [ID], function(err) {
+    if (err) {
+      res.status(400).send('Delete from Logtable failed');
+      return console.error(err.message);
+    } else {
+      res.status(200).send('Delete succeeded');
+    }
+  });
 });
