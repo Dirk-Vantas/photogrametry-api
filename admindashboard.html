@@ -14,7 +14,7 @@
     <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+
 </head>
 
 <body class="flex justify-center items-center">
@@ -26,9 +26,17 @@
             </h1>
             <div class="divider"></div>
             <br>
-                <div class="flex justify-center items-center">
+            <!-- <div class="flex justify-center items-center">
                     <img src="example-GLTFs/1200px-User-admin.png" alt="Trulli" height="128" width="128">
-                </div>
+                </div> -->
+            <div class="flex flex-col w-full lg:flex-row">
+                <div class="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center"><img
+                        src="example-GLTFs/1200px-User-admin.png" alt="Trulli" height="128" width="128"></div>
+                <div class="divider lg:divider-horizontal"></div>
+                <div class="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center"><img
+                        src="example-GLTFs/user.png" alt="Trulli" height="128" width="128"></div>   
+            </div>
+
             <br>
             <div class="divider"></div>
             <div class="overflow-x-auto">
@@ -43,14 +51,14 @@
                             <th>#</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbody">
                         <!-- row 1 -->
                         <tr class="hover">
                             <td>1</td>
                             <td>John Doe</td>
                             <td>12341234</td>
                             <td>0</td>
-                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
+                            <th><button class="btn btn-error" value=""><i class="fa fa-trash-o"
                                         style="font-size:24px"></i></button></th>
                         </tr>
                         <!-- row 2 -->
@@ -135,6 +143,7 @@
         </div>
         <br>
     </div>
+    <script src="admin.js"></script>
 </body>
 
 </html>

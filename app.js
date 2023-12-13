@@ -1,4 +1,4 @@
-const  express = require('express');
+const express = require('express');
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv")
 //const multer = require('multer');
@@ -28,10 +28,10 @@ app.use(cors());
 var runningProcesses = [];
 
 runningProcesses['testEntry'] = {
-  jobID:'randomJobID',
-  process:'testProcess',
-  status:"running",
-  pipeline:"started",
+  jobID: 'randomJobID',
+  process: 'testProcess',
+  status: "running",
+  pipeline: "started",
   startTime: new Date(),
 };
 
@@ -55,19 +55,19 @@ app.use(function (req, res, next) {
 });
 
 app.listen(PORT, () => {
-    console.log("Server Listening on PORT:", PORT);
-  });
+  console.log("Server Listening on PORT:", PORT);
+});
 
 //only for debugging front end will be diffrent file
-app.get("/", (req,res) => {
+app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "uploadTest.html"));
 });
 
 
 
-app.get("/debug", (req,res) => {
+app.get("/debug", (req, res) => {
   console.log('logged');
-  return res.json({status: 'success'});
+  return res.json({ status: 'success' });
 });
 
 //? maybe add middleware to check if file is too big and if files have
@@ -75,74 +75,74 @@ app.get("/debug", (req,res) => {
 
 //uploads and saves videos the 'jobs' folder to be processed by pipeline
 app.post('/upload',
-    fileUpload({createParentPath:true}),
-    (req,res)=> {
-      console.log(req);
-      //get the files from the request
-      const files = req.files
-      
-      const key = Object.keys(files)[0];
-      const uploadObject = files[key];
-      
-      console.log(uploadObject.md5);
-      //create job id from md5 video hash and a salt to make it unique
-      currentJobID = createJobID(uploadObject.md5);
-      
-      //create folder if not exist for the job
-      createJobFolder(__dirname,currentJobID);
+  fileUpload({ createParentPath: true }),
+  (req, res) => {
+    console.log(req);
+    //get the files from the request
+    const files = req.files
 
-      //creat jobpath
-      const jobPath = path.join('jobs',currentJobID)
+    const key = Object.keys(files)[0];
+    const uploadObject = files[key];
 
-      //write files to system for processing of the pipeline
-      //create filepath for upload
-      const filepath = path.join(__dirname, jobPath,uploadObject.name)
-      
-      uploadObject.mv(filepath,(err) => {
-        if (err) return res.status(500).json({ status : "error", message: err})
-      })
-      console.log('upload succeeded and folder has been created')
-      
-      //after upload succeeded start pipeline processing
-      // Spawn a child process to run the video processing pipeline
-      createPipelineProcess(currentJobID,jobPath,filepath,runningProcesses);
-      
-      //set correct repsonse headers to allow remote orgin to recive success message :)
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-      
-      return res.json({status: 'success', message: uploadObject.name, hash: currentJobID})
+    console.log(uploadObject.md5);
+    //create job id from md5 video hash and a salt to make it unique
+    currentJobID = createJobID(uploadObject.md5);
 
-    }
+    //create folder if not exist for the job
+    createJobFolder(__dirname, currentJobID);
+
+    //creat jobpath
+    const jobPath = path.join('jobs', currentJobID)
+
+    //write files to system for processing of the pipeline
+    //create filepath for upload
+    const filepath = path.join(__dirname, jobPath, uploadObject.name)
+
+    uploadObject.mv(filepath, (err) => {
+      if (err) return res.status(500).json({ status: "error", message: err })
+    })
+    console.log('upload succeeded and folder has been created')
+
+    //after upload succeeded start pipeline processing
+    // Spawn a child process to run the video processing pipeline
+    createPipelineProcess(currentJobID, jobPath, filepath, runningProcesses);
+
+    //set correct repsonse headers to allow remote orgin to recive success message :)
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+    return res.json({ status: 'success', message: uploadObject.name, hash: currentJobID })
+
+  }
 );
 
 app.get('/status/:hashParam?', (req, res) => {
-  
+
   //set correct repsonse headers to allow remote orgin to recive success message :)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
   res.setHeader('Access-Control-Allow-Credentials', true); // If needed
-  
-  if (req.params.hashParam){
-    res.json(Object.values(runningProcesses[req.params.hashParam])); 
+
+  if (req.params.hashParam) {
+    res.json(Object.values(runningProcesses[req.params.hashParam]));
   }
-  else{
-    res.json(Object.values(runningProcesses)); 
-  } 
+  else {
+    res.json(Object.values(runningProcesses));
+  }
 });
 
 // Define an endpoint that takes a hash (object) as a parameter
 app.get('/getModel/:hashParam', (req, res) => {
   // Retrieve the hash parameter from the URL
   // if no parameter given send error
-  if (!req.params.hashParam){
+  if (!req.params.hashParam) {
     res.status(400).send('Bad Request: no job hash given');
   }
   const hashParam = req.params.hashParam;
   //check if specified job is done
-  if (!runningProcesses[hashParam]['status']=== 'done'){
+  if (!runningProcesses[hashParam]['status'] === 'done') {
     res.status(400).send('Bad Request: job is not done wait');
   }
   //serve path to model
@@ -152,41 +152,51 @@ app.get('/getModel/:hashParam', (req, res) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  res.json({status: 'success', modelPath : modelPath})
-  
+  res.json({ status: 'success', modelPath: modelPath })
+
 });
 
 app.post('/users', (req, res) => {
-
   const username = req.query.usrnam;
   const password = req.query.pwd;
+  const password2 = req.query.pwd2;
+  if (password == password2 && username && password) {
+    db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function (err) {
+      if (err) {
+        res.status(400).send('User couldnt be made')
+        return console.error(err.message);
+      } else {
+        res.status(200).send('User successfully made')
+      }
+    });
+  } else {
+    res.status(400).send('Passwords arent identical or Username or Password not given');
+  }
 
-  db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function(err) {
-    if (err) {
-      res.status(400).send('User couldnt be made')
-      return console.error(err.message);
-    } else {
-      res.status(200).send('User successfully made')
-    }
-  });
 });
 
 app.get('/login', (req, res) => {
   const username = req.query.nam;
   const password = req.query.pwd;
 
-  db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function(err, rows) {
-    if (err) {
-      res.status(400).send('DB Request failed');
-      return console.error(err.message);
-    } else {
-      if (rows.length > 0) {
-        res.status(200).send(rows);
+  if (username && password) {
+    db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function (err, rows) {
+      if (err) {
+        res.status(400).send('DB Request failed');
+        return console.error(err.message);
       } else {
-        res.status(400).send(rows);
+        //if everything succeeded
+        if (rows.length > 0) {
+          res.status(200).send(rows);
+        } else {
+          res.status(400).send(rows);
+        }
       }
-    }
-  });
+    });
+  } else {
+    res.status(400).send("No Username or Password");
+  }
+
 });
 
 app.get('/users', (req, res) => {
@@ -207,7 +217,7 @@ app.get('/users', (req, res) => {
 app.delete('/users', (req, res) => {
   const id = req.query.id;
 
-  db.run('DELETE FROM Benutzer WHERE ID = ?', [id], function(err, rows) {
+  db.run('DELETE FROM Benutzer WHERE ID = ?', [id], function (err, rows) {
     console.log(rows)
     if (err) {
       res.status(400).send('Delete from Usertable failed')
@@ -224,7 +234,7 @@ app.post('/log', (req, res) => {
   const llevel = req.query.llevel
   const lart = req.query.lart
 
-  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, Number(aufID), new Date().toLocaleString(), llevel, Number(lart)], function(err) {
+  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, Number(aufID), new Date().toLocaleString(), llevel, Number(lart)], function (err) {
     if (err) {
       res.status(400).send('User couldnt be made')
       return console.error(err.message);
@@ -235,7 +245,7 @@ app.post('/log', (req, res) => {
 });
 
 app.get('/log', (req, res) => {
-  db.run('SELECT * FROM Log', [], function(err, rows) {
+  db.run('SELECT * FROM Log', [], function (err, rows) {
     if (err) {
       res.status(400).send('User couldnt be made')
       return console.error(err.message);
@@ -252,7 +262,7 @@ app.get('/log', (req, res) => {
 app.delete('/log', (req, res) => {
   const ID = req.query.id
 
-  db.run('DELETE FROM Log WHERE ID = ?', [ID], function(err) {
+  db.run('DELETE FROM Log WHERE ID = ?', [ID], function (err) {
     if (err) {
       res.status(400).send('Delete from Logtable failed');
       return console.error(err.message);
