@@ -127,9 +127,28 @@ app.get('/status/:hashParam?', (req, res) => {
 
   if (req.params.hashParam) {
     res.json(Object.values(runningProcesses[req.params.hashParam]));
+    db.get(`SELECT * FROM Auftreage WHERE jobID = ?`, [hashParam], (err, row) => {
+      if (err) {
+          return console.error(err.message);
+      }
+      // Convert the array of rows into a dictionary
+      if (row) {
+        // Creating a new dictionary
+        let rowDict = {};
+
+        // Looping over each key in the row
+        for (let key in row) {
+            if (row.hasOwnProperty(key)) {
+                rowDict[key] = row[key];
+            }
+        }}
+        res.json(rowDict)
+          
+  });
+  
   }
   else {
-    res.json(Object.values(runningProcesses));
+    res.json({error: "no hash parameter defined :("});
   }
 });
 
