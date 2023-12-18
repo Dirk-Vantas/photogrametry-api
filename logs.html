@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Photogrammetry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.7/dist/full.css" rel="stylesheet" type="text/css">
+    <!--Imports a model-viewer JavaScript code -->
+    <!--It helps to handle how the 3D Object would be displayed -->
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body class="flex justify-center items-center">
+    <div class="text-center">
+        <br>
+        <div class="flex flex-col">
+            <h1 class="text-3xl font-bold">
+                Logs
+            </h1>
+            <div class="divider"></div>
+            <br>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- head -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>AufgabeID</th>
+                            <th>Logtime</th>
+                            <th>Loglevel</th>
+                            <th>LogArt</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+                        <!-- row 1 -->
+                        <tr class="hover">
+                            <td>1</td>
+                            <td>John Doe</td>
+                            <td>12341234</td>
+                            <td>0</td>
+                            <td>12341234</td>
+                            <td>0</td>
+                            <th><button class="btn btn-info" value=""><i class="fa fa-info-circle"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 2 -->
+                        <tr class="hover">
+                            <td>2</td>
+                            <td>John D. oe</td>
+                            <td>passwordSecret</td>
+                            <td>0</td>
+                            <td>12341234</td>
+                            <td>0</td>
+                            <th><button class="btn btn-info" value=""><i class="fa fa-info-circle"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                        <!-- row 3 -->
+                        <tr class="hover">
+
+                            <td>3</td>
+                            <td>Joe Dohn</td>
+                            <td>iLoveJoeBiden</td>
+                            <td>1</td>
+                            <td>12341234</td>
+                            <td>0</td>
+                            <th><button class="btn btn-info" value=""><i class="fa fa-info-circle"
+                                        style="font-size:24px"></i></button></th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+    </div>
+    <dialog id="my_modal_1" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <h3 class="font-bold text-lg" id="head">Hello!</h3>
+            <table class="table">
+                <!-- head -->
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>AufgabeID</th>
+                        <th>Logtime</th>
+                        <th>Loglevel</th>
+                        <th>LogArt</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodylog">
+
+                </tbody>
+            </table>
+            <div class="modal-action">
+                <form method="dialog">
+                    <!-- if there is a button in form, it will close the modal -->
+                    <button class="btn">Close</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+    <script src="log.js"></script>
+</body>
+
+</html>

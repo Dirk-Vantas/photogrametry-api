@@ -1,5 +1,6 @@
 //here the pipeline and process spawner and managing will take place
 const { spawn } = require('child_process');
+const sqlite3 = require('sqlite3').verbose();
 const db = new sqlite3.Database('grametry.db');
 //const createJobID = require('./createJobID');
 //const pipelineConstruct = require('./utilities/pipelineConstruct');

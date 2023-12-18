@@ -247,7 +247,7 @@ app.delete('/users', (req, res) => {
   });
 });
 
-app.post('/log', (req, res) => {
+app.post('/logs', (req, res) => {
   const msg = req.query.msg
   const aufID = req.query.aID
   const llevel = req.query.llevel
@@ -255,18 +255,18 @@ app.post('/log', (req, res) => {
 
   db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, Number(aufID), new Date().toLocaleString(), llevel, Number(lart)], function (err) {
     if (err) {
-      res.status(400).send('User couldnt be made')
+      res.status(400).send('Log couldnt be made')
       return console.error(err.message);
     } else {
-      res.status(200).send('User successfully made')
+      res.status(200).send('Log successfully made')
     }
   });
 });
 
-app.get('/log', (req, res) => {
-  db.run('SELECT * FROM Log', [], function (err, rows) {
+app.get('/logs', (req, res) => {
+  db.all('SELECT * FROM Log', [], function (err, rows) {
     if (err) {
-      res.status(400).send('User couldnt be made')
+      res.status(400).send('Log couldnt be made')
       return console.error(err.message);
     } else {
       if (rows.length > 0) {
@@ -278,7 +278,24 @@ app.get('/log', (req, res) => {
   });
 });
 
-app.delete('/log', (req, res) => {
+app.get('/log', (req, res) => {
+  const id = req.query.id
+
+  db.all('SELECT * FROM Log where ID = ?', [id], function (err, rows) {
+    if (err) {
+      res.status(400).send('Log couldnt be made')
+      return console.error(err.message);
+    } else {
+      if (rows.length > 0) {
+        res.status(200).send(rows);
+      } else {
+        res.status(400).send('Couldnt get Logs');
+      }
+    }
+  });
+});
+
+app.delete('/logs', (req, res) => {
   const ID = req.query.id
 
   db.run('DELETE FROM Log WHERE ID = ?', [ID], function (err) {
