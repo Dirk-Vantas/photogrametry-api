@@ -234,51 +234,6 @@ app.get('/getModel/:hashParam', (req, res) => {
 
 });
 
-// app.post('/users', (req, res) => {
-//   const username = req.query.usrnam;
-//   const password = req.query.pwd;
-//   const password2 = req.query.pwd2;
-//   //TODO validate and hash and salt passwords
-//   if (password == password2 && username && password) {
-//     db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function (err) {
-//       if (err) {
-//         res.status(400).send('User couldnt be made')
-//         return console.error(err.message);
-//       } else {
-//         res.status(200).send('User successfully made')
-//       }
-//     });
-//   } else {
-//     res.status(400).send('Passwords arent identical or Username or Password not given');
-//   }
-
-// });
-
-// app.get('/login', (req, res) => {
-//   const username = req.query.nam;
-//   const password = req.query.pwd;
-  
-//   //TODO validate all inputs before it acceses the database
-//   if (username && password) {
-//     db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function (err, rows) {
-//       if (err) {
-//         res.status(400).send('DB Request failed');
-//         return console.error(err.message);
-//       } else {
-//         //if everything succeeded
-//         if (rows.length > 0) {
-//           res.status(200).send(rows);
-//         } else {
-//           res.status(400).send(rows);
-//         }
-//       }
-//     });
-//   } else {
-//     res.status(400).send("No Username or Password");
-//   }
-
-// });
-
 app.get('/users', (req, res) => {
   db.all('SELECT * FROM Benutzer', [], function (err, rows) {
     if (err) {
@@ -371,15 +326,6 @@ app.delete('/logs', (req, res) => {
 
 //userlogin views with ejs 
 
-
-
-//index
-app.get("/",checkAuthenticated, (req, res) => {
-  const userOBJ = req.user
-  res.render('index.ejs', {name: userOBJ.Benutzername});
-  console.log('site has been accessed')
-});
-
 //login page
 app.get("/login", checkNotAuthenticated,(req, res) => {
   res.render('login.ejs');
@@ -394,12 +340,12 @@ app.post('/login', passport.authenticate('local', {
 
 
 //userdashboard
-app.get("/userdashboard", checkAuthenticated,(req, res) => {
+app.get("/userdashboard", checkAuthenticated,checkifUser,(req, res) => {
   res.render('userdashboard.ejs', {userOBJ: req.user});
   console.log('site has been accessed')
 });
 //admindashboard
-app.get("/admindashboard", checkAuthenticated,checkUserLevel,(req, res) => {
+app.get("/admindashboard", checkAuthenticated,checkifAdmin,(req, res) => {
   res.render('admindashboard.ejs');
   console.log('site has been accessed')
 });
@@ -444,13 +390,23 @@ app.post("/register", async (req, res) => {
   }
 });
 
-function checkUserLevel(req,res, next){
+function checkifAdmin(req,res, next){
   if (req.user.userlevel == 0)
   {
     return next();
   }
   else{
     res.redirect('/userdashboard')
+  }
+}
+
+function checkifUser(req,res, next){
+  if (req.user.userlevel == 1)
+  {
+    return next();
+  }
+  else{
+    res.redirect('/admindashboard')
   }
 }
 
