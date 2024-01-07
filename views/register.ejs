@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login-Photogrammetry</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.7.7/dist/full.css" rel="stylesheet" type="text/css">
+    <!--Imports a model-viewer JavaScript code -->
+    <!--It helps to handle how the 3D Object would be displayed -->
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+</head>
+
+<body class="flex justify-center items-center">
+    <div>
+        <br>
+        <br>
+        <form action="/register"  method="POST" id="registerForm">
+            <div class="border-2 border-indigo-500/100 card w-96 bg-base-100 shadow-xl">
+                <figure><img src="example-GLTFs/register.png" alt="Shoes" /></figure>
+                <div class="card-body">
+
+                    <h2 class="card-title">Register</h2>
+                    <p>Create an Account here!</p>
+                    <input type="text" placeholder="Username" name="username" class="input input-bordered w-full max-w-xs" id="usr" required pattern="[a-zA-Z0-9]+" minlength="3" maxlength="200"/>
+                    
+                    <input type="password" placeholder="Password" name="password1" class="input input-bordered w-full max-w-xs" id="pwd" required minlength="8" maxlength="200"/>
+
+                    <input type="password" placeholder="Password (again)" name="password2" class="input input-bordered w-full max-w-xs" id="pwd2" required minlength="8" maxlength="200"/>
+
+                    <!-- <input type="text" placeholder="Username" class="input input-bordered w-full max-w-xs" id="usr" />
+                    
+                    <input type="text" placeholder="Password" class="input input-bordered w-full max-w-xs" id="pwd" />
+
+                    <input type="text" placeholder="Password (again)" class="input input-bordered w-full max-w-xs" id="pwd2" /> -->
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-secondary" type="reset">Clear Forms</button>
+                        <button class="btn btn-primary">submit</button>
+                    </div>
+                    <div class="text-center link"><a href="/login">Already have account? Login Here!</a></div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div id="alertUser">
+    </div>
+    <script src="register.js"></script>
+</body>
+
+
+</html>

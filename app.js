@@ -1,39 +1,27 @@
+//package imports
 const express = require('express');
 const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv")
-//const multer = require('multer');
 const path = require("path");
 var cors = require('cors');
-
 const sqlite3 = require('sqlite3').verbose();
+const passport = require('passport')
+const flash = require('express-flash')
+const session = require('express-session')
+const bcrypt = require('bcrypt')
 
-// Open a database connection (or create a new one if it doesn't exist)
-const db = new sqlite3.Database('grametry.db');
-
-dotenv.config();
-
+//utilities import
 const createJobFolder = require('./utilities/createFolder');
 const createJobID = require('./utilities/createJobID');
 const createPipelineProcess = require('./utilities/pipelineManager');
-//const pipelineConstruct = require('./utilities/pipelineConstruct');
+const initializePassport = require('./config/passport-config.js')
 
-
+//default config for express
 const PORT = process.env.PORT || 3000;
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-
-// Map to store information about running video processes
-var runningProcesses = [];
-
-runningProcesses['testEntry'] = {
-  jobID: 'randomJobID',
-  process: 'testProcess',
-  status: "running",
-  pipeline: "started",
-  startTime: new Date(),
-};
 
 app.use(function (req, res, next) {
 
@@ -58,20 +46,91 @@ app.listen(PORT, () => {
   console.log("Server Listening on PORT:", PORT);
 });
 
-//only for debugging front end will be diffrent file
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "uploadTest.html"));
-});
+// Open a database connection (or create a new one if it doesn't exist)
+const db = new sqlite3.Database('grametry.db');
+
+dotenv.config();
+
+initializePassport(
+  passport,
+  async (username) => {
+    try {
+      const rows = await new Promise((resolve, reject) => {
+        db.all('SELECT * FROM Benutzer WHERE Benutzername = ?', [username], function (err, rows) {
+          if (err) {
+            return reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+
+      // Check if rows have data and handle accordingly
+      if (rows.length > 0) {
+        console.log(rows);
+        return rows;
+      } else {
+        console.log(rows);
+        return null;
+      }
+    } catch (err) {
+      console.error(err.message);
+      // Handle the error as needed
+    }
+  
+  },
+  async (id) => {
+    try {
+      const rows = await new Promise((resolve, reject) => {
+        db.all('SELECT * FROM Benutzer WHERE ID = ?', [id], function (err, rows) {
+          if (err) {
+            return reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+
+      // Check if rows have data and handle accordingly
+      if (rows.length > 0) {
+        console.log(rows);
+        return rows;
+      } else {
+        console.log(rows);
+        return null;
+      }
+    } catch (err) {
+      console.error(err.message);
+      // Handle the error as needed
+    }
+  },
+);
 
 
+// ULTRA LEGACY CODE REMOVE AS SOON AS THIS BITCH RUNS //
+// Map to store information about running video processes
+var runningProcesses = [];
 
-app.get("/debug", (req, res) => {
-  console.log('logged');
-  return res.json({ status: 'success' });
-});
+runningProcesses['testEntry'] = {
+  jobID: 'randomJobID',
+  process: 'testProcess',
+  status: "running",
+  pipeline: "started",
+  startTime: new Date(),
+};
 
-//? maybe add middleware to check if file is too big and if files have
-//  been supplied propely
+//set viewengine 
+app.set('view-engine', 'ejs');
+app.use(express.urlencoded({ extended: false}))
+//passport
+app.use(flash())
+app.use(session({
+  secret : 'supersecret',
+  resave: false,
+  saveUninitialized: false,
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 //uploads and saves videos the 'jobs' folder to be processed by pipeline
 app.post('/upload',
@@ -175,48 +234,50 @@ app.get('/getModel/:hashParam', (req, res) => {
 
 });
 
-app.post('/users', (req, res) => {
-  const username = req.query.usrnam;
-  const password = req.query.pwd;
-  const password2 = req.query.pwd2;
-  if (password == password2 && username && password) {
-    db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function (err) {
-      if (err) {
-        res.status(400).send('User couldnt be made')
-        return console.error(err.message);
-      } else {
-        res.status(200).send('User successfully made')
-      }
-    });
-  } else {
-    res.status(400).send('Passwords arent identical or Username or Password not given');
-  }
+// app.post('/users', (req, res) => {
+//   const username = req.query.usrnam;
+//   const password = req.query.pwd;
+//   const password2 = req.query.pwd2;
+//   //TODO validate and hash and salt passwords
+//   if (password == password2 && username && password) {
+//     db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, password], function (err) {
+//       if (err) {
+//         res.status(400).send('User couldnt be made')
+//         return console.error(err.message);
+//       } else {
+//         res.status(200).send('User successfully made')
+//       }
+//     });
+//   } else {
+//     res.status(400).send('Passwords arent identical or Username or Password not given');
+//   }
 
-});
+// });
 
-app.get('/login', (req, res) => {
-  const username = req.query.nam;
-  const password = req.query.pwd;
+// app.get('/login', (req, res) => {
+//   const username = req.query.nam;
+//   const password = req.query.pwd;
+  
+//   //TODO validate all inputs before it acceses the database
+//   if (username && password) {
+//     db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function (err, rows) {
+//       if (err) {
+//         res.status(400).send('DB Request failed');
+//         return console.error(err.message);
+//       } else {
+//         //if everything succeeded
+//         if (rows.length > 0) {
+//           res.status(200).send(rows);
+//         } else {
+//           res.status(400).send(rows);
+//         }
+//       }
+//     });
+//   } else {
+//     res.status(400).send("No Username or Password");
+//   }
 
-  if (username && password) {
-    db.all('SELECT benutzername, userlevel FROM Benutzer WHERE Benutzername = ? AND Passwort = ?', [username, password], function (err, rows) {
-      if (err) {
-        res.status(400).send('DB Request failed');
-        return console.error(err.message);
-      } else {
-        //if everything succeeded
-        if (rows.length > 0) {
-          res.status(200).send(rows);
-        } else {
-          res.status(400).send(rows);
-        }
-      }
-    });
-  } else {
-    res.status(400).send("No Username or Password");
-  }
-
-});
+// });
 
 app.get('/users', (req, res) => {
   db.all('SELECT * FROM Benutzer', [], function (err, rows) {
@@ -305,5 +366,114 @@ app.delete('/logs', (req, res) => {
     } else {
       res.status(200).send('Delete succeeded');
     }
+  });
+});
+
+//userlogin views with ejs 
+
+
+
+//index
+app.get("/",checkAuthenticated, (req, res) => {
+  const userOBJ = req.user
+  res.render('index.ejs', {name: userOBJ.Benutzername});
+  console.log('site has been accessed')
+});
+
+//login page
+app.get("/login", checkNotAuthenticated,(req, res) => {
+  res.render('login.ejs');
+  console.log('site has been accessed')
+});
+
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/userdashboard',
+  failureRedirect: '/login',
+  failureFlash: true,
+}));
+
+
+//userdashboard
+app.get("/userdashboard", checkAuthenticated,(req, res) => {
+  res.render('userdashboard.ejs', {userOBJ: req.user});
+  console.log('site has been accessed')
+});
+//admindashboard
+app.get("/admindashboard", checkAuthenticated,checkUserLevel,(req, res) => {
+  res.render('admindashboard.ejs');
+  console.log('site has been accessed')
+});
+//register page
+app.get("/register", checkNotAuthenticated,(req, res) => {
+  res.render('register.ejs');
+  console.log('register site has been accessed')
+});
+
+//handle user register
+app.post("/register", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password1;
+  const password2 = req.body.password2;
+
+  //todo validate userinput
+  // Validation of same passwords
+  if ((password == password2) && username && password) {
+    console.log('usercreation initialized')
+  }
+  else{
+    return res.status(400).send('Invalid input');
+  }
+
+  try {
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert user into database
+    db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, hashedPassword], function (err) {
+      if (err) {
+        console.error(err.message);
+        return res.status(500).send('User could not be created');
+      } else {
+        console.log("User successfully created");
+        res.redirect('/login');
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).redirect('/register');
+  }
+});
+
+function checkUserLevel(req,res, next){
+  if (req.user.userlevel == 0)
+  {
+    return next();
+  }
+  else{
+    res.redirect('/userdashboard')
+  }
+}
+
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  }
+
+  res.redirect('/login')
+}
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect('/')
+  }
+  next()
+}
+
+app.post('/logout', (req, res) => {
+  req.logOut(function(err) {
+      if (err) { 
+          return next(err); // or handle the error in a way that fits your app
+      }
+      res.redirect('/login'); // Redirect to the login page or another page
   });
 });
