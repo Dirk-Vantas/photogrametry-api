@@ -87,65 +87,30 @@
             </div>
             <div class="divider"></div>
             <div class="overflow-x-auto">
+                <h2>Job List Panel</h2>
                 <table class="table">
                     <!-- head -->
                     <thead>
                         <tr>
-                            <th>DB-ID</th>
-                            <th>uID</th>
+                            <th>Unique ID</th>
                             <th>Comment</th>
                             <th>Date</th>
-                            <th>Foreign Key</th>
+                            <th>User ID</th>
                             <th>Status</th>
-                            <th>File</th>
+                            <th>Progress</th>
                             <th>#</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- row 1 -->
-                        <tr class="hover">
-                            <td>1</td>
-                            <td>170e74cf32efaea4dcf2eb169b56fc17</td>
-                            <td>Comment 1</td>
-                            <td>12.12.2024 XX:XX:XX</td>
-                            <td>4</td>
-                            <td>online</td>
-                            <td>C:/I/use/unix/based/path.psp</td>
-                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
-                                        style="font-size:24px"></i></button></th>
-                        </tr>
-                        <!-- row 2 -->
-                        <tr class="hover">
-                            <td>2</td>
-                            <td>a8587251fd989a3a15a68f1b88b24c2b</td>
-                            <td>Comment 2</td>
-                            <td>12.12.2024 XX:XX:XX</td>
-                            <td>3</td>
-                            <td>online</td>
-                            <td>D:/ecretDir/porn/hah/you/thought.raw</td>
-                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
-                                        style="font-size:24px"></i></button></th>
-                        </tr>
-                        <!-- row 3 -->
-                        <tr class="hover">
-
-                            <td>3</td>
-                            <td>720e892022e07cca31dd9391612ac868</td>
-                            <td>Comment 3</td>
-                            <td>12.12.2024 XX:XX:XX</td>
-                            <td>1</td>
-                            <td>offline</td>
-                            <td>G:/programms/fortnite/csgo2/heroin.zip</td>
-                            <th><button class="btn btn-error"><i class="fa fa-trash-o"
-                                        style="font-size:24px"></i></button></th>
-                        </tr>
+                    <tbody id="jobTableBody">
+                        
                     </tbody>
                 </table>
             </div>
         </div>
         <br>
     </div>
-    <script src="admin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script src="userdashboard.js"></script>
 </body>
 
 </html>

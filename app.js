@@ -268,7 +268,24 @@ app.get('/jobs', (req, res) => {
   const user = req.user
 
   //console.log(user.userID)
-
+  //if user is admin give all jobs
+  if (user.userlevel == 1) {
+    db.all('select * from jobs',[], function (err,rows) {
+      if (err){
+        console.log(err.message)
+      } else {
+        if (rows.length >  0) {
+          console.log(rows)
+          res.status(200).send(rows)
+        }
+        else{
+          console.log(rows)
+          console.log(' no jobs')
+        }
+      }
+    });
+  } else {
+  // if user is normal user just give him his jobs  
   db.all('select * from jobs where BenutzerID = ?',[user.ID], function (err,rows) {
     if (err){
       console.log(err.message)
@@ -283,6 +300,8 @@ app.get('/jobs', (req, res) => {
       }
     }
   });
+  }
+  
 
 });
   
