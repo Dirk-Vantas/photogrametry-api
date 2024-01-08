@@ -43,6 +43,35 @@
                 <button class="btn btn-primary" id="UploadFile">Upload Video</button>
             </form>
         </div>
+        <div class="flex justify-center items-center">
+            <!-- ... other content ... -->
+        
+            <!-- Job Data Table -->
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <!-- Table Head -->
+                    <thead>
+                        <tr>
+                            <th>Unique ID</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>User ID</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    <!-- Table Body -->
+                    <tbody id="jobTableBody">
+                        <!-- Data rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        
+            <!-- ... rest of your content ... -->
+            <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+            <script src="userdashboard.js"></script>
+        </div>
         <br>
     </div>
     <script src="main.js"></script>

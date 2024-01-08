@@ -389,8 +389,28 @@ app.get("/login", checkNotAuthenticated,(req, res) => {
   console.log('site has been accessed')
 });
 
+//redirect users correctly
+app.get("/", (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/login')
+  }
+
+  const user = req.user
+  switch(user.userlevel) {
+    case 1:
+      res.redirect('/admindashboard');
+      break;
+    case 0:
+      res.redirect('/userdashboard');
+      break;
+    
+    default:
+      console.log("I don't know that fruit.");
+    }
+});
+
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/userdashboard',
+  successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true,
 }));
@@ -448,7 +468,7 @@ app.post("/register", async (req, res) => {
 });
 
 function checkifAdmin(req,res, next){
-  if (req.user.userlevel == 0)
+  if (req.user.userlevel == 1)
   {
     return next();
   }
@@ -458,7 +478,7 @@ function checkifAdmin(req,res, next){
 }
 
 function checkifUser(req,res, next){
-  if (req.user.userlevel == 1)
+  if (req.user.userlevel == 0)
   {
     return next();
   }

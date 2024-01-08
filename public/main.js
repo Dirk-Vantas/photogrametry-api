@@ -42,7 +42,7 @@ const sendFiles = async () => {
     //     loadProgressbar(json?.hash);
     // }, 5000);
 
-    waitForProcess(json?.hash);
+    //waitForProcess(json?.hash);
 
     //    const h3 = document.getElementById('msg')
     //    h3.textContent = `Message: ${json?.message}`
