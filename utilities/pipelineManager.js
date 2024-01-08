@@ -6,7 +6,7 @@ const db = new sqlite3.Database('grametry.db');
 //const pipelineConstruct = require('./utilities/pipelineConstruct');
 //const pipelineConstruct = require('./pipelineConstruct');
 
-const createPipelineProcess = (jobID, jobPath, filepath, runningProcesses) => {
+const createPipelineProcess = (jobID, jobPath, filepath, userID) => {
   // jobID needed to identfy the spawned job later
   // filepath needed so the scripts can work in the correct folder space
   // runningPorcess is a map that is needed to keep track of started jobs and their asosiated pid
@@ -32,7 +32,6 @@ const createPipelineProcess = (jobID, jobPath, filepath, runningProcesses) => {
   //TODO implement these with the user job creation interface later 
   let kommentar = "large nuts"
   const currentDate = new Date();
-  const userID = 1
   const progress = 0
 
   //insert new process into database

@@ -3,20 +3,20 @@ const loading = document.getElementById('loading')
 const downloadButton = document.getElementById('download')
 var bar = document.getElementById('progressBar')
 
-downloadButton.className = "btn btn-primary btn-outline btn-disabled"
-downloadButton.ariaDisabled = "false"
+//downloadButton.className = "btn btn-primary btn-outline btn-disabled"
+//downloadButton.ariaDisabled = "false"
 
 const sendFiles = async () => {
 
-    
+    console.log('button test')
     // disable so user cannot do anything wrong
     document.getElementById('BtnFile').setAttribute('disabled', '')
     document.getElementById('UploadFile').className = "btn btn-primary btn-disabled"
 
-    downloadButton.className = "btn btn-primary btn-outline btn-disabled"
-    downloadButton.ariaDisabled = "false"
+    //downloadButton.className = "btn btn-primary btn-outline btn-disabled"
+    //downloadButton.ariaDisabled = "false"
 
-    loading.innerHTML = '<span class="loading loading-spinner loading-md"></span>'
+    //loading.innerHTML = '<span class="loading loading-spinner loading-md"></span>'
     // Object
     const myFiles = document.getElementById('BtnFile').files
 
@@ -26,7 +26,7 @@ const sendFiles = async () => {
         formData.append(myFiles.item(key).name, myFiles.item(key))
     })
 
-    const response = await fetch('http://localhost:3000/upload', {
+    const response = await fetch('/upload', {
         method: 'POST',
         body: formData
     })

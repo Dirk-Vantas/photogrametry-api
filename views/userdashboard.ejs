@@ -37,11 +37,15 @@
         <br>
         <div class="divider"></div>
         <div class="border-double border-4 border-indigo-500/100">
-            <iframe src="index.html" title="mane tool page" width="900" height="900">
-            </iframe>
+            <form id="uploadForm" class="w-full">
+                <input type="file" id="BtnFile" class="file-input file-input-bordered file-input-primary"
+                    accept="video/*" required>
+                <button class="btn btn-primary" id="UploadFile">Upload Video</button>
+            </form>
         </div>
         <br>
     </div>
+    <script src="main.js"></script>
 </body>
 
 </html>

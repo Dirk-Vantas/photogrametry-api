@@ -23,6 +23,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+//server javascript files
+app.use(express.static('public'));
+
+
 app.use(function (req, res, next) {
 
   // Website you wish to allow to connect
@@ -134,11 +138,15 @@ app.use(passport.session())
 
 //uploads and saves videos the 'jobs' folder to be processed by pipeline
 app.post('/upload',
-  fileUpload({ createParentPath: true }),
+fileUpload({ createParentPath: true }),
   (req, res) => {
     console.log(req);
     //get the files from the request
     const files = req.files
+
+    //get the user that is currently logged in 
+    const user = req.user
+    const userID = user.ID
 
     const key = Object.keys(files)[0];
     const uploadObject = files[key];
@@ -157,14 +165,36 @@ app.post('/upload',
     //create filepath for upload
     const filepath = path.join(__dirname, jobPath, uploadObject.name)
 
-    uploadObject.mv(filepath, (err) => {
-      if (err) return res.status(500).json({ status: "error", message: err })
-    })
+    // uploadObject.mv(filepath, (err) => {
+    //   if (err) return res.status(500).json({ status: "error", message: err })
+    // })
     console.log('upload succeeded and folder has been created')
 
     //after upload succeeded start pipeline processing
     // Spawn a child process to run the video processing pipeline
-    createPipelineProcess(currentJobID, jobPath, filepath, runningProcesses);
+    //createPipelineProcess(currentJobID, jobPath, filepath, userID);
+    
+    const kommentar = 'test'
+    const currentDate = new Date();
+    const progress = 0
+    const status = "started"
+    //insert new process into database
+    // Now insert into database here
+    //?stopped working for some reason
+    db.run('INSERT INTO jobs (uniqueID, Kommentar, Date, BenutzerID, Status, Progress) VALUES (?, ?, ?, ?, ?, ?)',
+    [currentJobID, kommentar, currentDate, userID, status, progress], function (dbErr) {
+      if (dbErr) {
+        console.error(dbErr.message);
+        //return res.status(500).send('Error inserting job into database');
+      } else {
+        console.log("Job successfully created");
+        // Send response here after successful database insertion
+        //res.json({ status: 'success', message: "Job created", jobID: currentJobID });
+
+      }
+    });
+  
+  
 
     //set correct repsonse headers to allow remote orgin to recive success message :)
     res.header("Access-Control-Allow-Origin", "*");
@@ -233,6 +263,33 @@ app.get('/getModel/:hashParam', (req, res) => {
   res.json({ status: 'success', modelPath: modelPath })
 
 });
+
+app.get('/jobs', (req, res) => {
+  const user = req.user
+
+  //console.log(user.userID)
+
+  db.all('select * from jobs where BenutzerID = ?',[user.ID], function (err,rows) {
+    if (err){
+      console.log(err.message)
+    } else {
+      if (rows.length >  0) {
+        console.log(rows)
+        res.status(200).send(rows)
+      }
+      else{
+        console.log(rows)
+        console.log('user has no jobs')
+      }
+    }
+  });
+
+});
+  
+  
+  
+  
+
 
 app.get('/users', (req, res) => {
   db.all('SELECT * FROM Benutzer', [], function (err, rows) {
@@ -432,4 +489,4 @@ app.post('/logout', (req, res) => {
       }
       res.redirect('/login'); // Redirect to the login page or another page
   });
-});
+})
