@@ -87,7 +87,7 @@ const createPipelineProcess = (jobID, jobPath, filepath, userID) => {
         default:
           console.log(`Sorry, couldnt handle message: ${expr}.`);
       }
-      db.run(`UPDATE Auftraege SET progress = ? WHERE jobID = ?`,
+      db.run(`UPDATE jobs SET progress = ? WHERE jobID = ?`,
         [newProgressValue, messageID], function (err) {
           if (err) {
             return console.error(err.message);

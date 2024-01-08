@@ -5,11 +5,12 @@ function initialize(passport, getUserByName,getUserById) {
     const authenticateUser = async (username,password,done) => {
         const user = await getUserByName(username)
         if (user == null) {
-            return done(null, false, {message: 'no user with that name found'})
+            return done(null, false, {message: 'username or password wrong'})
         }
         const userOBJ = user[0]
     
         try {
+            //timing attack compare to mock password if user isnot found
             if (await bcrypt.compare(password, userOBJ.Passwort)) {
                 console.log("shit worked")
                 
