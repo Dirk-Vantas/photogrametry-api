@@ -12,6 +12,8 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const bcrypt = require('bcrypt')
+const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
 
 // (async () => {
 //   let sqldb = new SqlDatabase();
@@ -30,6 +32,8 @@ const createJobFolder = require('./utilities/createFolder');
 const createJobID = require('./utilities/createJobID');
 const createPipelineProcess = require('./utilities/pipelineManager');
 const initializePassport = require('./config/passport-config.js')
+const logger = require('./utilities/logger.js');
+const createLog = require('./utilities/logger.js');
 
 //default config for express
 const PORT = process.env.PORT || 3000;
@@ -166,6 +170,10 @@ fileUpload({ createParentPath: true }),
     const key = Object.keys(files)[0];
     const uploadObject = files[key];
 
+    //verify if it is indeed a mp4 uploaded
+    
+
+
     console.log(uploadObject.md5);
     //create job id from md5 video hash and a salt to make it unique
     currentJobID = createJobID(uploadObject.md5);
@@ -180,46 +188,75 @@ fileUpload({ createParentPath: true }),
     //create filepath for upload
     const filepath = path.join(__dirname, jobPath, uploadObject.name)
 
-    // uploadObject.mv(filepath, (err) => {
-    //   if (err) return res.status(500).json({ status: "error", message: err })
-    // })
-    console.log('upload succeeded and folder has been created')
+    uploadObject.mv(filepath, (err) => {
+      if (err) return res.status(500).json({ status: "error", message: err })
+    })
+    //verify if it is indeed a mp4 uploaded
+    ffmpeg.ffprobe(filepath, function(err, metadata) {
+      if (err) {
+          fs.unlinkSync(filepath); // Delete the file
+          console.log('video file invalid')
+          createLog(db,'invalid video file uploaded',currentJobID,0,2)
+          res.status(400).send('invalid video file uploaded');
+      
+        } else {
+          ffmpeg.ffprobe(filepath,  function (err, info) {
+            if (err){
+              return done(err);
+            } 
+            if (info["streams"][0]["codec_type"] != 'video'){
+              console.log('video file invalid')
+              createLog(db,'invalid video file uploaded',currentJobID,0,2)
+              fs.unlinkSync(filepath); // Delete the file
+              res.status(400).send('invalid video file uploaded');
+            }
+            else {
+              
+              console.log('mp4 is valid');
+              console.log('upload succeeded and folder has been created')
+              createLog(db,'upload and validation succeeded and folder has been created',currentJobID,0,4)
 
-    //after upload succeeded start pipeline processing
-    // Spawn a child process to run the video processing pipeline
-    //createPipelineProcess(currentJobID, jobPath, filepath, userID);
+              //after upload succeeded start pipeline processing
+              // Spawn a child process to run the video processing pipeline
+              //createPipelineProcess(currentJobID, jobPath, filepath, userID);
 
-    const kommentar = 'test'
-    const currentDate = new Date();
-    const progress = 0
-    const status = "started"
-    //insert new process into database
-    // Now insert into database here
-    //?stopped working for some reason
-    db.run('INSERT INTO jobs (uniqueID, Kommentar, Date, BenutzerID, Status, Progress) VALUES (?, ?, ?, ?, ?, ?)',
-    [currentJobID, kommentar, currentDate, userID, status, progress], function (dbErr) {
-      if (dbErr) {
-        console.error(dbErr.message);
-        //return res.status(500).send('Error inserting job into database');
-      } else {
-        console.log("Job successfully created");
-        // Send response here after successful database insertion
-        //res.json({ status: 'success', message: "Job created", jobID: currentJobID });
+              const kommentar = 'video file upload'
+              const currentDate = new Date().toLocaleString();
+              const progress = 0
+              const status = "started"
+              //insert new process into database
+              // Now insert into database here
+              //?stopped working for some reason
+              db.run('INSERT INTO jobs (uniqueID, Kommentar, Date, BenutzerID, Status, Progress) VALUES (?, ?, ?, ?, ?, ?)',
+              [currentJobID, kommentar, currentDate, userID, status, progress], function (dbErr) {
+                if (dbErr) {
+                  console.error(dbErr.message);
+                  //return res.status(500).send('Error inserting job into database');
+                } else {
+                  console.log("Job successfully created");
+                  // Send response here after successful database insertion
+                  //res.json({ status: 'success', message: "Job created", jobID: currentJobID });
 
-      }
+                }
+                //create log if user uploads new job
+                createLog(db,'new job was created',currentJobID,0,4)
+              });
+
+
+
+              //set correct repsonse headers to allow remote orgin to recive success message :)
+              res.header("Access-Control-Allow-Origin", "*");
+              res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+              res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+              return res.json({ status: 'success', message: uploadObject.name, hash: currentJobID })
+
+              
+            }
+          });
+        }
     });
-
-
-
-    //set correct repsonse headers to allow remote orgin to recive success message :)
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-    return res.json({ status: 'success', message: uploadObject.name, hash: currentJobID })
-
-  }
-);
+  });
 
 app.get('/status/:hashParam?', (req, res) => {
 
@@ -325,10 +362,6 @@ app.get('/jobs', (req, res) => {
 });
 
 
-
-
-
-
 app.get('/users', (req, res) => {
   db.all('SELECT * FROM Benutzer where userlevel = ?', [0], function (err, rows) {
     if (err) {
@@ -353,9 +386,11 @@ app.post('/delete/job', (req, res) => {
         //console.log(rows)
         if (err) {
           res.status(400).send('Delete from jobs table failed')
+          createLog(db,'job deletion failed',req.body.job,0,2)
           return console.error(err.message);
         } else {
           res.status(200).send('Deletetion of job succeeded')
+          createLog(db,'job deletion succeded',req.body.job,0,4)
         }
       });
   }
@@ -371,30 +406,18 @@ app.post('/delete/user', (req, res) => {
         //console.log(rows)
         if (err) {
           console.log('Delete from user table failed')
+          createLog(db,'user deletion failed',req.body.job,0,2)
           return console.error(err.message);
         } else {
-          //res.status(200).send('Deletetion of job succeeded')
+          
           console.log('Deletetion of user succeeded')
+          createLog(db,'user deletion succeded',req.body.job,0,4)
         }
       });
   }
 });
 
-app.post('/logs', (req, res) => {
-  const msg = req.query.msg
-  const aufID = req.query.aID
-  const llevel = req.query.llevel
-  const lart = req.query.lart
 
-  db.run('INSERT INTO Log (Logmessage, AufgabeID, Logtime, Loglevel, LogArt) VALUES (?, ?, ?, ?, ?)', [msg, Number(aufID), new Date().toLocaleString(), llevel, Number(lart)], function (err) {
-    if (err) {
-      res.status(400).send('Log couldnt be made')
-      return console.error(err.message);
-    } else {
-      res.status(200).send('Log successfully made')
-    }
-  });
-});
 
 app.get('/logs', (req, res) => {
   db.all('SELECT * FROM Log', [], function (err, rows) {
@@ -411,9 +434,9 @@ app.get('/logs', (req, res) => {
   });
 });
 
+//only usefull if we add a serch function
 app.get('/log', (req, res) => {
   const id = req.query.id
-
   db.all('SELECT * FROM Log where ID = ?', [id], function (err, rows) {
     if (err) {
       res.status(400).send('Log couldnt be made')
@@ -428,6 +451,7 @@ app.get('/log', (req, res) => {
   });
 });
 
+//this should not be an option
 app.delete('/logs', (req, res) => {
   const ID = req.query.id
 
@@ -469,11 +493,34 @@ app.get("/", (req, res) => {
     }
 });
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/login',
-  failureFlash: true,
-}));
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) {
+      // Log the error
+      console.error("Authentication Error: ", err);
+      
+      return next(err);
+    }
+    if (!user) {
+      // Log the failed login attempt
+      console.log("Login failed for user:", req.body.username);
+      return res.redirect('/login');
+    }
+    req.logIn(user, function(err) {
+      if (err) {
+        // Log the error
+        console.error("Login Error: ", err);
+        return next(err);
+      }
+      // Log successful login
+      console.log("Login successful for user:", user.Benutzername);
+      createLog(db,`login of user ${user.Benutzername}`,user.ID,0,4)
+      // Redirect to the success page
+      return res.redirect('/');
+    });
+  })(req, res, next);
+});
+
 
 
 //userdashboard
@@ -518,6 +565,7 @@ app.post("/register", async (req, res) => {
         return res.status(500).send('User could not be created');
       } else {
         console.log("User successfully created");
+        createLog(db,`user  ${username} succesfully created`,'nan',0,4)
         res.redirect('/login');
       }
     });
@@ -563,10 +611,15 @@ function checkNotAuthenticated(req, res, next) {
 }
 
 app.post('/logout', (req, res) => {
-  req.logOut(function(err) {
-      if (err) {
-          return next(err); // or handle the error in a way that fits your app
-      }
-      res.redirect('/login'); // Redirect to the login page or another page
-  });
+  if (req.isAuthenticated()) {
+    const user = req.user
+    req.logOut(function(err) {
+        if (err) {
+            return next(err); // or handle the error in a way that fits your app
+        }
+        createLog(db,`user  ${user.Benutzername} logged out`,user.ID,0,4)
+        res.redirect('/login'); // Redirect to the login page or another page
+    });
+  }
+  
 })

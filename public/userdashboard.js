@@ -16,13 +16,15 @@ function populateJobTable(data) {
         row.innerHTML += `
             <td id="qr-${job.uniqueID}"></td>
             <td>${job.Kommentar}</td>
-            <td>${job.Date}</td>
-            <td>${job.BenutzerID}</td>
+            <td>${new Date(job.Date)}</td>
+            
             <td>${job.Status.trim()}</td>
             <td>${job.progress}</td>
             `;
             if  (window.location.pathname == '/admindashboard'){
+                row.innerHTML += `<td>${job.BenutzerID}</td>`;
                 row.innerHTML += `<td><button type="button" class="btn btn-error" onclick="deleteJob(event,'${job.uniqueID}')"><i class="fa fa-trash-o" style="font-size:24px"></i></button></td>`;
+            
             }
 
 
@@ -110,8 +112,8 @@ function refreshUserData() {
 window.onload = function() {
     refreshUserData();  // Call once on page load
     refreshJobData();
-    setInterval(refreshUserData, 30000);  // Then call every 5 seconds
-    setInterval(refreshJobData, 30000);  // Then call every 5 seconds
+    setInterval(refreshUserData, 1000);  // Then call every 5 seconds
+    setInterval(refreshJobData, 1000);  // Then call every 5 seconds
 };
 
 
@@ -155,11 +157,3 @@ function deleteUser(event, userId) {
         console.error('There has been a problem with your delete operation:', error);
     });
 }
-document.addEventListener('click', function(event) {
-    // Check if the clicked element is a button
-    if (event.target.tagName === 'BUTTON') {
-        // Call your functions
-        refreshUserData();
-        refreshJobData();
-    }
-});
