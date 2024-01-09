@@ -662,3 +662,9 @@ app.post('/logout', (req, res) => {
   }
   
 })
+//handle 404s
+app.get('*',(req, res, next) => {
+  res.render('404.ejs'); // Assuming you have a view named '404'
+  // Or, to send an HTML file:
+  // res.status(404).sendFile(path.join(__dirname, 'path-to-your-404.html'));
+});
