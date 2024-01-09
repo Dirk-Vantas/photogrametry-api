@@ -10,8 +10,8 @@ const sendFiles = async () => {
 
     console.log('button test')
     // disable so user cannot do anything wrong
-    document.getElementById('BtnFile').setAttribute('disabled', '')
-    document.getElementById('UploadFile').className = "btn btn-primary btn-disabled"
+    //document.getElementById('BtnFile').setAttribute('disabled', '')
+    //document.getElementById('UploadFile').className = "btn btn-primary btn-disabled"
 
     //downloadButton.className = "btn btn-primary btn-outline btn-disabled"
     //downloadButton.ariaDisabled = "false"
@@ -56,11 +56,11 @@ async function waitForProcess(hash) {
     return new Promise(resolve => {
       const interval = setInterval(async () => {
         try {
-            
+
             let progress = await loadProgressbar(hash,status);
             if (progress === done){
                 clearInterval(interval); // Stop the interval when the desired value is found
-                
+
                 bar.removeAttribute('value')
                 bar.setAttribute('value', '0')
                 console.log('DONEDONEDONEDONEDONEDONEDONEDONEDONEDONEDONE')
@@ -69,7 +69,7 @@ async function waitForProcess(hash) {
             else{
                 console.log('keep running');
             }
-            
+
         } catch (error) {
           console.error('API call failed:', error);
         }
@@ -94,10 +94,10 @@ const loadProgressbar = async (hash,status) => {
     if (json[3] == 100){
         console.log('done');
 
-        
+
         //document.getElementById('viewer').removeAttribute("src");
         enableDownloadButton(hash);
-        
+
         //document.getElementById('viewer').removeAttribute("ios-src")
 
         //need this to reload
@@ -106,22 +106,22 @@ const loadProgressbar = async (hash,status) => {
 
         let container = document.getElementById("viewer");
         let content = container.innerHTML;
-        container.innerHTML= content; 
+        container.innerHTML= content;
 
-        
+
 
         bar.removeAttribute('value');
         bar.setAttribute('value', '0');
     }
 
     return json[3];
-    
+
     // bar.removeAttribute('value')
     // bar.setAttribute('value', json[3])
-    
+
     // if (json[3] == 100) {
     //     //set new shit
-        
+
     //     clearInterval(intervalId);
     // }
 }

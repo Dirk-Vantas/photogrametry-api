@@ -1,5 +1,5 @@
-import { User, Job, Log } from "./Entity.js";
-import { SqlDatabase } from 'sqlite3orm';
+//import { User, Job, Log } from "./Entity.js";
+//import { SqlDatabase } from 'sqlite3orm';
 
 //package imports
 const express = require('express');
@@ -13,17 +13,17 @@ const flash = require('express-flash')
 const session = require('express-session')
 const bcrypt = require('bcrypt')
 
-(async () => {
-  let sqldb = new SqlDatabase();
+// (async () => {
+//   let sqldb = new SqlDatabase();
 
-  await sqldb.open('file:sqlite3orm?mode=memory&cache=shared');
+//   await sqldb.open('file:sqlite3orm?mode=memory&cache=shared');
 
-  var userDAO = new BaseDAO(User, sqldb);
-  var jobDAO = new BaseDAO(Job, sqldb);
-  var logDAO = new BaseDAO(Log, sqldb);
+//   var userDAO = new BaseDAO(User, sqldb);
+//   var jobDAO = new BaseDAO(Job, sqldb);
+//   var logDAO = new BaseDAO(Log, sqldb);
 
 
-})();
+// })();
 
 //utilities import
 const createJobFolder = require('./utilities/createFolder');
@@ -86,10 +86,10 @@ initializePassport(
 
       // Check if rows have data and handle accordingly
       if (rows.length > 0) {
-        console.log(rows);
+        //console.log(rows);
         return rows;
       } else {
-        console.log(rows);
+        //console.log(rows);
         return null;
       }
     } catch (err) {
@@ -112,10 +112,10 @@ initializePassport(
 
       // Check if rows have data and handle accordingly
       if (rows.length > 0) {
-        console.log(rows);
+        //console.log(rows);
         return rows;
       } else {
-        console.log(rows);
+        //console.log(rows);
         return null;
       }
     } catch (err) {
@@ -282,6 +282,10 @@ app.get('/getModel/:hashParam', (req, res) => {
 app.get('/jobs', (req, res) => {
   const user = req.user
 
+  if (user == null){
+    console.log('no authenticated user was found while making this request')
+    return
+  }
   //console.log(user.userID)
   //if user is admin give all jobs
   if (user.userlevel == 1) {
@@ -290,11 +294,11 @@ app.get('/jobs', (req, res) => {
         console.log(err.message)
       } else {
         if (rows.length >  0) {
-          console.log(rows)
+          //console.log(rows)
           res.status(200).send(rows)
         }
         else{
-          console.log(rows)
+          //console.log(rows)
           console.log(' no jobs')
         }
       }
@@ -306,11 +310,11 @@ app.get('/jobs', (req, res) => {
       console.log(err.message)
     } else {
       if (rows.length >  0) {
-        console.log(rows)
+        //console.log(rows)
         res.status(200).send(rows)
       }
       else{
-        console.log(rows)
+        //console.log(rows)
         console.log('user has no jobs')
       }
     }
@@ -326,9 +330,6 @@ app.get('/jobs', (req, res) => {
 
 
 app.get('/users', (req, res) => {
-  
-
-
   db.all('SELECT * FROM Benutzer', [], function (err, rows) {
     if (err) {
       res.status(400).send('Couldnt select users')
@@ -346,14 +347,10 @@ app.get('/users', (req, res) => {
 app.post('/delete/job', (req, res) => {
   const id = req.query.id;
   const user = req.user
-
-  const jobitem = req.body.job
   //check if admin is doing the request
   if (user.userlevel == 1){
-    //check what kind of delete is requested
-
       db.run('DELETE FROM jobs WHERE uniqueID = ?', [req.body.job], function (err, rows) {
-        console.log(rows)
+        //console.log(rows)
         if (err) {
           res.status(400).send('Delete from jobs table failed')
           return console.error(err.message);
@@ -361,10 +358,26 @@ app.post('/delete/job', (req, res) => {
           res.status(200).send('Deletetion of job succeeded')
         }
       });
-
-
   }
+});
 
+app.post('/delete/user', (req, res) => {
+  console.log('deletion started')
+  const id = req.query.id;
+  const user = req.user
+  //check if admin is doing the request
+  if (user.userlevel == 1){
+      db.run('DELETE FROM Benutzer WHERE ID = ?', [req.body.user], function (err, rows) {
+        //console.log(rows)
+        if (err) {
+          console.log('Delete from user table failed')
+          return console.error(err.message);
+        } else {
+          //res.status(200).send('Deletetion of job succeeded')
+          console.log('Deletetion of user succeeded')
+        }
+      });
+  }
 });
 
 app.post('/logs', (req, res) => {

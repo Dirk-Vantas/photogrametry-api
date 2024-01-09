@@ -16,17 +16,16 @@ function populateJobTable(data) {
         row.innerHTML += `
             <td id="qr-${job.uniqueID}"></td>
             <td>${job.Kommentar}</td>
-            <td>${formatDate(job.Date)}</td>
+            <td>${job.Date}</td>
             <td>${job.BenutzerID}</td>
             <td>${job.Status.trim()}</td>
             <td>${job.progress}</td>
-            <td>
-            <form action="/delete/job" method="POST">
-                <input type="hidden" name="job" value="${job.uniqueID}">
-                <button type="submit" class="btn btn-error"><i class="fa fa-trash-o" style="font-size:24px"></i></button>
-            </form>
-            </td>
-        `;
+            `;
+            if  (window.location.pathname == '/admindashboard'){
+                row.innerHTML += `<td><button type="button" class="btn btn-error" onclick="deleteJob(event,'${job.uniqueID}')"><i class="fa fa-trash-o" style="font-size:24px"></i></button></td>`;
+            }
+
+
 
         tableBody.appendChild(row);
 
@@ -78,10 +77,7 @@ function populateUserTable(data) {
             <td>${user.Passwort}</td>
             <td>${user.userlevel}</td>
             <td>
-                <form action="/delete" method="POST">
-                    <input type="hidden" name="user" value="${user.ID}">
-                    <button type="submit" class="btn btn-error"><i class="fa fa-trash-o" style="font-size:24px"></i></button>
-                </form>
+            <button type="button" class="btn btn-error" onclick="deleteUser(event,'${user.ID}')"><i class="fa fa-trash-o" style="font-size:24px"></i></button>
             </td>
         `;
         tableBody.appendChild(row);
@@ -107,10 +103,63 @@ function refreshUserData() {
         });
 }
 
+
+
+
 // Call the function right after the page loads and then every 5 seconds
 window.onload = function() {
     refreshUserData();  // Call once on page load
     refreshJobData();
-    setInterval(refreshUserData, 100000);  // Then call every 5 seconds
+    setInterval(refreshUserData, 30000);  // Then call every 5 seconds
     setInterval(refreshJobData, 30000);  // Then call every 5 seconds
 };
+
+
+function deleteJob(event, jobId) {
+    event.preventDefault(); // Prevent form submission
+    fetch('/delete/job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job: jobId })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        if (response.ok){
+            refreshJobData();  // Refresh user data after deletion
+        }
+    })
+    .catch(error => {
+        console.error('There has been a problem with your delete operation:', error);
+    });
+}
+
+function deleteUser(event, userId) {
+    event.preventDefault(); // Prevent form submission
+    fetch('/delete/user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user: userId })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        if (response.ok){
+            refreshUserData();  // Refresh user data after deletion
+        }
+
+    })
+    .catch(error => {
+        console.error('There has been a problem with your delete operation:', error);
+    });
+}
+document.addEventListener('click', function(event) {
+    // Check if the clicked element is a button
+    if (event.target.tagName === 'BUTTON') {
+        // Call your functions
+        refreshUserData();
+        refreshJobData();
+    }
+});
