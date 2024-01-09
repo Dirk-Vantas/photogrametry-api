@@ -44,6 +44,7 @@ app.use(cors());
 
 //server javascript files
 app.use(express.static('public'));
+app.use(express.static('src'))
 
 
 app.use(function (req, res, next) {

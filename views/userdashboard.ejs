@@ -25,12 +25,13 @@
 
         <div class="text-right">
             <h1>Logged in as: <%= userOBJ.Benutzername %></h1>
-        </div>
-
-        <div>
             <form action="/logout" method="post">
                 <button type="submit">Logout</button>
             </form>
+        </div>
+
+        <div>
+            
 
         </div>
 
@@ -47,7 +48,7 @@
             <!-- ... other content ... -->
 
             <!-- Job Data Table -->
-            <div class="overflow-x-auto">
+            <div class="overflow-y-auto h-128">
                 <table class="table">
                     <!-- Table Head -->
                     <thead>

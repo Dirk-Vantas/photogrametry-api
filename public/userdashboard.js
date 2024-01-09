@@ -112,8 +112,10 @@ function refreshUserData() {
 window.onload = function() {
     refreshUserData();  // Call once on page load
     refreshJobData();
+    refreshLogData();
     setInterval(refreshUserData, 1000);  // Then call every 5 seconds
     setInterval(refreshJobData, 1000);  // Then call every 5 seconds
+    setinterval(refreshLogData, 2000);
 };
 
 
@@ -156,4 +158,52 @@ function deleteUser(event, userId) {
     .catch(error => {
         console.error('There has been a problem with your delete operation:', error);
     });
+}
+
+function populateLogTable(data) {
+    const tableBody = document.getElementById('logTableBody');
+    if (tableBody != null) {
+        tableBody.innerHTML = ''; // Clear existing table data
+        data.forEach(log => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${log.ID}</td>
+                <td>${log.Logmessage}</td>
+                <td id="qr-${log.ID}"></td>
+                <td>${log.Logtime}</td>
+                <td>${log.LogLevel}</td>
+                <td>${log.LogArt}</td>
+            `;
+            tableBody.appendChild(row);
+
+            const qrCodeElement = document.getElementById(`qr-${log.ID}`);
+
+            // Generate the QR code
+            new QRCode(qrCodeElement, {
+                text: log.AufgabeID,
+                width: 40,
+                height: 40,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    }
+}
+
+// Function to fetch logs and refresh log data
+function refreshLogData() {
+    fetch('/logs')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            populateLogTable(data);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
 }
