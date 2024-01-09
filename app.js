@@ -14,6 +14,7 @@ const session = require('express-session')
 const bcrypt = require('bcrypt')
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
+const { body } = require('express-validator');
 
 // (async () => {
 //   let sqldb = new SqlDatabase();
@@ -490,11 +491,37 @@ app.get("/", (req, res) => {
       break;
 
     default:
-      console.log("I don't know that fruit.");
+      res.redirect('/login');
     }
 });
 
-app.post('/login', function(req, res, next) {
+app.post('/login', checkNotAuthenticated, 
+[
+
+  //validation
+  
+      body('username', 'Invalid username').exists().isLength({ min: 3 }).escape(),
+      body('password', 'Invalid password').exists().isLength({ min: 5 }).escape(),
+      
+  
+  ],
+  passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
+
+
+app.post('/login', [
+
+  //validation
+  
+      body('username', 'Invalid username').exists().isLength({ min: 3 }).escape(),
+      body('password', 'Invalid password').exists().isLength({ min: 5 }).escape(),
+      
+  
+  ],
+  function(req, res, next) {
   passport.authenticate('local', function(err, user, info) {
     if (err) {
       // Log the error
@@ -541,18 +568,29 @@ app.get("/register", checkNotAuthenticated,(req, res) => {
 });
 
 //handle user register
-app.post("/register", async (req, res) => {
+app.post("/register", [
+
+//validation
+
+    body('username', 'Invalid username').exists().isLength({ min: 3 }).escape(),
+    body('password1', 'Invalid password').exists().isLength({ min: 5 }).escape(),
+    body('password1', 'Invalid password').exists().isLength({ min: 5 }).escape(),
+
+],
+
+  async (req, res) => {
   const username = req.body.username;
   const password = req.body.password1;
   const password2 = req.body.password2;
 
   //todo validate userinput
   // Validation of same passwords
-  if ((password == password2) && username && password) {
+  if (password == password2) {
     console.log('usercreation initialized')
   }
   else{
-    return res.status(400).send('Invalid input');
+    const message = 'passwords dont match'
+    res.redirect(`/register?message=${encodeURIComponent(message)}`);
   }
 
   try {

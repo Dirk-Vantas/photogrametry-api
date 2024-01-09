@@ -18,6 +18,7 @@
     <div>
         <br>
         <br>
+       
         <form action="/register"  method="POST" id="registerForm">
             <div class="border-2 border-indigo-500/100 card w-96 bg-base-100 shadow-xl">
                 <figure><img src="login.png" alt="Shoes" /></figure>
@@ -48,6 +49,17 @@
     <div id="alertUser">
     </div>
     <script src="register.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const message = urlParams.get('message');
+            if (message) {
+                alert(message);
+            }
+        });
+
+
+    </script>
 </body>
 
 
