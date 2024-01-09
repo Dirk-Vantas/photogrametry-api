@@ -38,7 +38,7 @@ const sendFiles = async () => {
 
     loading.innerHTML = ''
 
-    // const intervalId = setInterval(function() {
+    // const intervalId = s etInterval(function() {
     //     loadProgressbar(json?.hash);
     // }, 5000);
 
