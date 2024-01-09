@@ -81,7 +81,7 @@ initializePassport(
       console.error(err.message);
       // Handle the error as needed
     }
-  
+
   },
   async (id) => {
     try {
@@ -123,7 +123,7 @@ runningProcesses['testEntry'] = {
   startTime: new Date(),
 };
 
-//set viewengine 
+//set viewengine
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false}))
 //passport
@@ -144,7 +144,7 @@ fileUpload({ createParentPath: true }),
     //get the files from the request
     const files = req.files
 
-    //get the user that is currently logged in 
+    //get the user that is currently logged in
     const user = req.user
     const userID = user.ID
 
@@ -173,7 +173,7 @@ fileUpload({ createParentPath: true }),
     //after upload succeeded start pipeline processing
     // Spawn a child process to run the video processing pipeline
     //createPipelineProcess(currentJobID, jobPath, filepath, userID);
-    
+
     const kommentar = 'test'
     const currentDate = new Date();
     const progress = 0
@@ -193,8 +193,8 @@ fileUpload({ createParentPath: true }),
 
       }
     });
-  
-  
+
+
 
     //set correct repsonse headers to allow remote orgin to recive success message :)
     res.header("Access-Control-Allow-Origin", "*");
@@ -232,9 +232,9 @@ app.get('/status/:hashParam?', (req, res) => {
             }
         }}
         res.json(rowDict)
-          
+
   });
-  
+
   }
   else {
     res.json({error: "no hash parameter defined :("});
@@ -285,7 +285,7 @@ app.get('/jobs', (req, res) => {
       }
     });
   } else {
-  // if user is normal user just give him his jobs  
+  // if user is normal user just give him his jobs
   db.all('select * from jobs where BenutzerID = ?',[user.ID], function (err,rows) {
     if (err){
       console.log(err.message)
@@ -301,13 +301,13 @@ app.get('/jobs', (req, res) => {
     }
   });
   }
-  
+
 
 });
-  
-  
-  
-  
+
+
+
+
 
 
 app.get('/users', (req, res) => {
@@ -325,18 +325,28 @@ app.get('/users', (req, res) => {
   });
 });
 
-app.delete('/users', (req, res) => {
+app.post('/delete/job', (req, res) => {
   const id = req.query.id;
+  const user = req.user
 
-  db.run('DELETE FROM Benutzer WHERE ID = ?', [id], function (err, rows) {
-    console.log(rows)
-    if (err) {
-      res.status(400).send('Delete from Usertable failed')
-      return console.error(err.message);
-    } else {
-      res.status(200).send('Delete succeeded')
-    }
-  });
+  const jobitem = req.body.job
+  //check if admin is doing the request
+  if (user.userlevel == 1){
+    //check what kind of delete is requested
+
+      db.run('DELETE FROM jobs WHERE uniqueID = ?', [req.body.job], function (err, rows) {
+        console.log(rows)
+        if (err) {
+          res.status(400).send('Delete from jobs table failed')
+          return console.error(err.message);
+        } else {
+          res.status(200).send('Deletetion of job succeeded')
+        }
+      });
+
+
+  }
+
 });
 
 app.post('/logs', (req, res) => {
@@ -400,7 +410,7 @@ app.delete('/logs', (req, res) => {
   });
 });
 
-//userlogin views with ejs 
+//userlogin views with ejs
 
 //login page
 app.get("/login", checkNotAuthenticated,(req, res) => {
@@ -422,7 +432,7 @@ app.get("/", (req, res) => {
     case 0:
       res.redirect('/userdashboard');
       break;
-    
+
     default:
       console.log("I don't know that fruit.");
     }
@@ -523,7 +533,7 @@ function checkNotAuthenticated(req, res, next) {
 
 app.post('/logout', (req, res) => {
   req.logOut(function(err) {
-      if (err) { 
+      if (err) {
           return next(err); // or handle the error in a way that fits your app
       }
       res.redirect('/login'); // Redirect to the login page or another page
