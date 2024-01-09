@@ -330,7 +330,7 @@ app.get('/jobs', (req, res) => {
 
 
 app.get('/users', (req, res) => {
-  db.all('SELECT * FROM Benutzer', [], function (err, rows) {
+  db.all('SELECT * FROM Benutzer where userlevel = ?', [0], function (err, rows) {
     if (err) {
       res.status(400).send('Couldnt select users')
       return console.error(err.message);
@@ -512,7 +512,7 @@ app.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert user into database
-    db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 1)', [username, hashedPassword], function (err) {
+    db.run('INSERT INTO Benutzer (Benutzername, Passwort, userlevel) VALUES (?, ?, 0)', [username, hashedPassword], function (err) {
       if (err) {
         console.error(err.message);
         return res.status(500).send('User could not be created');
