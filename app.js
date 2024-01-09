@@ -1,3 +1,6 @@
+import { User, Job, Log } from "./Entity.js";
+import { SqlDatabase } from 'sqlite3orm';
+
 //package imports
 const express = require('express');
 const fileUpload = require("express-fileupload");
@@ -9,6 +12,18 @@ const passport = require('passport')
 const flash = require('express-flash')
 const session = require('express-session')
 const bcrypt = require('bcrypt')
+
+(async () => {
+  let sqldb = new SqlDatabase();
+
+  await sqldb.open('file:sqlite3orm?mode=memory&cache=shared');
+
+  var userDAO = new BaseDAO(User, sqldb);
+  var jobDAO = new BaseDAO(Job, sqldb);
+  var logDAO = new BaseDAO(Log, sqldb);
+
+
+})();
 
 //utilities import
 const createJobFolder = require('./utilities/createFolder');
@@ -311,6 +326,9 @@ app.get('/jobs', (req, res) => {
 
 
 app.get('/users', (req, res) => {
+  
+
+
   db.all('SELECT * FROM Benutzer', [], function (err, rows) {
     if (err) {
       res.status(400).send('Couldnt select users')
